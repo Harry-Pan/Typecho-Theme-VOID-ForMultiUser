@@ -84,6 +84,15 @@ section#archive-list{
                             color: $td-textColor-dark;
                         }
                     }
+                    /* 条目末尾的作者名，例如「-HarryPan」 */
+                    span.archive-author {
+                        margin-left: 0.6em;
+                        font-size: 0.9rem;
+                        color: rgba(0,0,0,0.3);
+                        .theme-dark &{
+                            color: $td-textColor-dark;
+                        }
+                    }
                     h4{
                         display: inline;
                     }

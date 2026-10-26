@@ -56,7 +56,7 @@ if(!Utils::isPjax()){
                             <a class="archive-title<?php if($setting['VOIDPlugin']) echo ' show-word-count'; ?>" 
                                 data-words="<?php if($setting['VOIDPlugin']) echo $post['words']; ?>" 
                                 href="<?php echo $post['permalink']; ?>">
-                                <span class="date"><?php echo date('m-d', $created); ?></span><?php echo $post['title']; ?>
+                                <span class="date"><?php echo date('m-d', $created); ?></span><?php echo $post['title']; ?><?php if(!empty($post['author'])): ?><span class="archive-author">-<?php echo $post['author']; ?></span><?php endif; ?>
                             </a>
                         </li>
                     <?php endforeach; ?>

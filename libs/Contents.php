@@ -434,11 +434,28 @@ Class Contents
                     ->where('table.contents.created < ?', time()));
 
         $stat = array();
+        $authorCache = array();
         foreach ($rows as $row) {
             $row = $widget->filter($row);
+
+            // 归档条目需要显示作者名，按 authorId 缓存查询，避免 N+1
+            $authorId = isset($row['authorId']) ? intval($row['authorId']) : 0;
+            if (!isset($authorCache[$authorId])) {
+                $user = $db->fetchRow($db->select('screenName', 'name')
+                            ->from('table.users')
+                            ->where('table.users.uid = ?', $authorId)
+                            ->limit(1));
+                if ($user) {
+                    $authorCache[$authorId] = empty($user['screenName']) ? $user['name'] : $user['screenName'];
+                } else {
+                    $authorCache[$authorId] = '';
+                }
+            }
+
             $arr = array(
                 'title' => $row['title'],
-                'permalink' => $row['permalink']);
+                'permalink' => $row['permalink'],
+                'author' => $authorCache[$authorId]);
 
             if(Utils::isPluginAvailable('VOID')) {
                 $arr['words'] = $row['wordCount'];
