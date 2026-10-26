@@ -223,10 +223,12 @@ var VOID = {
         VOID_Vote.reload();
 
         // 重载表情
-        if ($('.OwO').length > 0) {
+        if ($('.Typecho_Plugin_OwO').length > 0
+            && typeof Typecho_Plugin_OwO === 'undefined'
+            && typeof OwO !== 'undefined') {
             new OwO({
                 logo: 'OωO',
-                container: document.getElementsByClassName('OwO')[0],
+                container: document.getElementsByClassName('Typecho_Plugin_OwO')[0],
                 target: document.getElementsByClassName('input-area')[0],
                 api: '/usr/themes/VOID/assets/libs/owo/OwO_03.json',
                 position: 'down',
