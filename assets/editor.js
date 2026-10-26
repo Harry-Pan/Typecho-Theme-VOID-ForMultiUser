@@ -34,18 +34,7 @@ function insertAtCursor(myField, myValue) {
 $(function() {
     if($('#wmd-button-row').length>0){
         $('#wmd-button-row').append('<li class="wmd-spacer wmd-spacer1"></li><li class="wmd-button" id="wmd-photoset-button" style="" title="插入图集">图集</li>');
-        $('#wmd-button-row').append('<li class="wmd-spacer wmd-spacer1"></li><li class="wmd-button" id="wmd-owo-button" style="" title="插入表情"><span style="width:unset" class="OwO"></span></li>');
-        if (typeof OwO !== 'undefined' && document.getElementsByClassName('OwO').length > 0) {
-            new OwO({
-                logo: 'OωO',
-                container: document.getElementsByClassName('OwO')[0],
-                target: document.getElementById('text'),
-                api: '/usr/themes/VOID/assets/libs/owo/OwO_03.json',
-                position: 'down',
-                width: '400px',
-                maxHeight: '250px'
-            });
-        }
+        // 表情按钮与面板由 OwO 插件（TypechoPluginOwO）自行注入，主题不再重复添加
     }
     $(document).on('click','#wmd-photoset-button',function() {
         myField = document.getElementById('text');

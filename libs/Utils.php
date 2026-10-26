@@ -137,26 +137,11 @@ class Utils
      */
     public static function addButton()
     {
-        // 若已启用 OwO 插件，则由插件提供编辑器表情按钮与样式；否则使用主题内置版本
-        $hasOwOPlugin = self::isPluginAvailable('OwO')
-            || self::isPluginAvailable('OwOHP')
-            || self::isPluginAvailable('TypechoPluginOwO');
-
-        if (!$hasOwOPlugin) {
-            echo '<script src="';
-            self::indexTheme('/assets/libs/owo/owo_03.js');
-            echo '"></script>';
-        }
-
+        // 表情编辑器按钮与样式由 OwO 插件（TypechoPluginOwO）提供，
+        // 主题仅保留「图集」按钮与评论表单的响应式样式
         echo '<script src="';
         self::indexTheme('/assets/editor.js');
         echo '"></script>';
-
-        if (!$hasOwOPlugin) {
-            echo '<link rel="stylesheet" href="';
-            self::indexTheme('/assets/libs/owo/owo.min.css');
-            echo '" />';
-        }
        
         echo '<style>#custom-field textarea,#custom-field input{width:100%}
         .OwO span{background:none!important;width:unset!important;height:unset!important}

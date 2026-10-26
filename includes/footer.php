@@ -135,19 +135,12 @@ $setting = $GLOBALS['VOIDSetting'];
         <script src='<?php Utils::indexTheme('/assets/libs/mathjax/2.7.4/MathJax.js'); ?>'></script>
         <?php endif; ?>
         <script src="<?php Utils::indexTheme('/assets/VOID.js'); ?>"></script>
-        <script>
-        if($(".Typecho_Plugin_OwO").length > 0 && typeof Typecho_Plugin_OwO === 'undefined'){
-            new OwO({
-                logo: 'OωO',
-                container: document.getElementsByClassName('Typecho_Plugin_OwO')[0],
-                target: document.getElementsByClassName('input-area')[0],
-                api: '<?php Utils::indexTheme('/assets/libs/owo/OwO_03.json'); ?>',
-                position: 'down',
-                width: '400px',
-                maxHeight: '250px'
-            });
-        }
-        </script>
+        <?php
+        /*
+         * 表情面板由 OwO 插件负责初始化（Plugin::footer 内 new Typecho_Plugin_OwO）。
+         * 主题不再内置表情组件，此处保留占位说明，避免与插件重复初始化。
+         */
+        ?>
         <?php if($setting['pjax']): ?>
         <script>
             $(document).on('pjax:complete',function(){
