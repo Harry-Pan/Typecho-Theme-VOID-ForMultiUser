@@ -1,16 +1,14 @@
-**[2023.04.07] 如果大家配合 Typecho 1.2 版本使用 VOID 时遇到问题，请到 GitHub 集中留言反馈：https://github.com/AlanDecode/Typecho-Theme-VOID/issues/87**
+# Typecho Theme VOID for MultiUser 3.5.2
 
----
-
-# Typecho Theme VOID 3.5.2
-
-> ✏ 一款简洁优雅的 Typecho 主题
+> ✏ 一款可能没那么简洁的 Typecho 主题。拿去和朋友们搞点文学结社也许不错。
 
 作为计算机术语时，VOID 的意思是「无类型」。
 
 ![](https://raw.githubusercontent.com/AlanDecode/Typecho-Theme-VOID/master/screenshot.png)
 
-[![Build](https://github.com/AlanDecode/Typecho-Theme-VOID/workflows/Build/badge.svg)](https://github.com/AlanDecode/Typecho-Theme-VOID/actions) [![downloads](https://img.shields.io/github/downloads/AlanDecode/Typecho-Theme-VOID/total.svg?style=flat-square)](https://github.com/AlanDecode/Typecho-Theme-VOID/releases) [![](https://img.shields.io/github/release/AlanDecode/Typecho-Theme-VOID.svg?style=flat-square)](https://github.com/AlanDecode/Typecho-Theme-VOID/releases) ![](https://img.shields.io/github/license/AlanDecode/Typecho-Theme-VOID.svg?style=flat-square)
+由[AlanDecode](https://github.com/AlanDecode/)设计的Typecho主题。这里是经过一些改造后更适合多作者环境的版本。
+
+快叫上你的小伙伴一起搞文学社吧。
 
 ## 特性
 
@@ -57,8 +55,6 @@
 
 * 可选：将主题 `assets` 文件夹下的 `VOIDCacheRule.js` 复制一份到站点根目录，并在主题设置中启用 Service Worker 缓存。
 * 可选：主题文件夹下 advanceSetting.sample.json 中有一些高级设置，可以看看。
-
-开发版主题可以在这里获取：[开发版](https://github.com/AlanDecode/Typecho-Theme-VOID/archive/nightly.zip)。注意，不保证开发版有更新更多的功能。而且开发版变动频繁，若无必要请使用发布版主题。
 
 ## **常见问题（请务必仔细阅读）**
 
@@ -211,42 +207,31 @@ gulp build
 
 ## 更新日志
 
-**🍰 2020-07-04 Version 3.5.1**
+**🍰 2026-10-27 Version 3.5.2**
 
-*该版本依赖 VOID 插件 1.20 及以上版本，请先禁用原插件，上传新插件后重新启用插件*
+fork。
 
-* 修复：iframe 尺寸错误（#42）
-* 修复：归档页面显示未发布的文章（#45）
+更新了一些组件，并进行了一些适配多作者的改动。
 
-**🍰 2020-05-01 Version 3.5.0**
+* 新增：首页和各类归档页可配置头图。
+* 新增：彩蛋文章（不在主页展示，不影响个人页与搜索）
+* 优化：分享按钮部分重做。
+* 优化：分类 / 标签 / 作者 / 搜索页新增文章数。
+* 优化：归档页新增作者名称。
+* 优化：首页文章卡片新增作者名称。
+* 优化：导航栏新增作者栏。
+* 优化：文章过时提醒可以在配置项中进行配置。
+* 优化：注脚方案 bigfoot更换为littlefoot 4.1.4，解决了窄屏下某些注脚无法正确显示的问题。
+* 优化：MathJax升级至2.7.9。
+* 移除：owo，现在表情组件完全由**[Typecho_Plugin_OwO](https://github.com/Harry-Pan/Typecho_Plugin_OwO)**提供。
 
-*该版本依赖 VOID 插件 1.20 及以上版本，请先禁用原插件，上传新插件后重新启用插件*
-
-* 新增：[高级设置]图片懒加载渐变（需要 CDN 支持）
-* 新增：JSON-LD 结构化数据支持
-* 新增：重新设计的 404 页面
-* 新增：[高级设置]站点标题设置自定义字体
-* 优化：Bilibili 播放器自适应
-* 优化：图题不再影响灯箱展开
-* 调整：默认西文字体替换为 OpenSans
-* 调整：简化头图设置
-* 修复：某些情况下懒加载可能不触发的问题
-* 修复：懒加载导致归档页面错乱
-* 修复：Safari 平滑滚动无法打断, thank @Reedo0910
-* 修复：[#32](https://github.com/AlanDecode/Typecho-Theme-VOID/issues/32)
-* 修复：[#34](https://github.com/AlanDecode/Typecho-Theme-VOID/issues/34)
-* 移除：Microdata
-* 其它细节优化
-
-从 2.2 版本起，主题部分功能需要配套插件支持，例如文章点赞、浏览量统计、字数统计等。**请先卸载**原来的 Likes、TePostViews 插件，否则数据会出现错误！TePostViews 插件卸载前请设置为**卸载后保留数据**，以防丢失浏览数据。
-
-更多：[change-log.md](https://github.com/AlanDecode/Typecho-Theme-VOID/blob/master/change-log.md)
+https://github.com/AlanDecode/Typecho-Theme-VOID/blob/master/change-log.md)
 
 ## 鸣谢
 
 ### 开源项目
 
-[JQuery](https://github.com/jquery/jquery) | [PrismJS](https://prismjs.com/index.html) | [MathJax](https://www.mathjax.org/) | [fancyBox](http://fancyapps.com/fancybox/3/) | [bigfoot.js](http://www.bigfootjs.com/) | [OwO](https://github.com/DIYgod/OwO) | [pjax](https://github.com/defunkt/jquery-pjax) | [yue.css](https://github.com/lepture/yue.css) | [tocbot](https://tscanlin.github.io/tocbot/) | [pangu.js](https://github.com/vinta/pangu.js) | [social](https://github.com/lepture/social) | [Headroom.js](http://wicky.nillia.ms/headroom.js/) | [hypher](https://github.com/bramstein/hypher)
+[JQuery](https://github.com/jquery/jquery) | [PrismJS](https://prismjs.com/index.html) | [MathJax](https://www.mathjax.org/) | [fancyBox](http://fancyapps.com/fancybox/3/) | [littlefoot](https://github.com/goblindegook/littlefoot) | [pjax](https://github.com/defunkt/jquery-pjax) | [yue.css](https://github.com/lepture/yue.css) | [tocbot](https://tscanlin.github.io/tocbot/) | [pangu.js](https://github.com/vinta/pangu.js) | [social](https://github.com/lepture/social) | [Headroom.js](http://wicky.nillia.ms/headroom.js/) | [hypher](https://github.com/bramstein/hypher)
 
 ### 其他
 
@@ -254,7 +239,7 @@ gulp build
 
 ## 捐助
 
-**如果本项目对你有所帮助，请考虑捐助我**
+**如果本项目对你有所帮助，请考虑捐助原作者**
 
 ![谢谢支持](https://wx1.sinaimg.cn/large/0060lm7Tly1g0c4cbi71lj30sc0iv453.jpg)
 
