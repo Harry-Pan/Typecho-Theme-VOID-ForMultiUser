@@ -631,8 +631,15 @@ p.notice {
     top: 75px;
 }
 
+/*
+ * fill-mode 用 backwards 而非 both：
+ * both 会在动画结束后保留结束帧的 transform: translateY(0)，而任何 transform
+ * （即使值为 0）都会让该元素成为 position:fixed 后代的包含块，
+ * 导致 littlefoot 在窄屏下的底部抽屉被定位到文章容器底部而非视口底部而看不见。
+ * backwards 保留首帧（避免入场闪烁），结束后回到自然状态（无 transform）。
+ */
 .float-up {
-    animation: float-up $animationTime-very-slow cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: float-up $animationTime-very-slow cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
 }
 
 @media screen and (max-width: 767px){
