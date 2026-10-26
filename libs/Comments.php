@@ -171,7 +171,7 @@ class VOID_Widget_Comments_Archive extends Widget_Abstract_Comments
                 <span class="fold">[该评论已被自动折叠 | <a no-pjax target="_self" href="javascript:void(0)" 
                 onclick="VOID_Vote.toggleFoldComment(<?php echo $this->coid; ?>, this)">点击展开</a>]</span>
             <?php }?>
-            <div class="comment-content-inner"><?php echo Contents::parseBiaoQing($this->content); ?></div>
+            <div class="comment-content-inner"><?php echo $this->content; ?></div>
         </div>
         <div class="comment-reply">
             <?php $this->reply($singleCommentOptions->replyWord); ?>

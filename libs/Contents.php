@@ -84,7 +84,6 @@ Class Contents
         if ($widget instanceof Widget_Archive) {
             $text = self::parseRuby($text);
             $text = self::parseFancyBox($text, $widget->parameter->__get('type') == 'feed');
-            $text = self::parseBiaoQing($text);
             $text = self::parsePhotoSet($text);
             $text = self::parseNotice($text);
             $text = self::parseHeader($text);
@@ -100,7 +99,6 @@ Class Contents
         $text = empty($last)?$data:$last;
         if ($widget instanceof Widget_Archive) {
             $text = self::parseRuby($text);
-            $text = self::parseBiaoQing($text);
             $text = self::parseNotice($text);
             // 去除照片集标记
             $text = str_replace('[photos]', '', $text);
@@ -179,65 +177,6 @@ Class Contents
     private static function parsePhotoSetCallBack($match)
     {
         return '[photos'. str_replace(['<br>', '<p>', '</p>'], '', $match[1]) .'/photos]';
-    }
-
-    /**
-     * 解析表情
-     * 
-     * @return string
-     */
-    static public function parseBiaoQing($content)
-    {
-        $content = preg_replace_callback('/\:\:\(\s*(呵呵|哈哈|吐舌|太开心|笑眼|花心|小乖|乖|捂嘴笑|滑稽|你懂的|不高兴|怒|汗|黑线|泪|真棒|喷|惊哭|阴险|鄙视|酷|啊|狂汗|what|疑问|酸爽|呀咩爹|委屈|惊讶|睡觉|笑尿|挖鼻|吐|犀利|小红脸|懒得理|勉强|爱心|心碎|玫瑰|礼物|彩虹|太阳|星星月亮|钱币|茶杯|蛋糕|大拇指|胜利|haha|OK|沙发|手纸|香蕉|便便|药丸|红领巾|蜡烛|音乐|灯泡|开心|钱|咦|呼|冷|生气|弱|吐血)\s*\)/is',
-            array('Contents', 'parsePaopaoBiaoqingCallback'), $content);
-        $content = preg_replace_callback('/\:\@\(\s*(.*?)\s*\)/is',
-            array('Contents', 'parseSergestidShrimpBiaoqingCallback'), $content);
-        $content = preg_replace_callback('/\:\&\(\s*(.*?)\s*\)/is',
-            array('Contents', 'parseQuyinBiaoqingCallback'), $content);
-        $content = preg_replace_callback('/\:\$\(\s*(.*?)\s*\)/is',
-            array('Contents', 'parseMenheraBiaoqingCallback'), $content);
-
-        return $content;
-    }
-
-    /**
-     * 泡泡表情回调函数
-     * 
-     * @return string
-     */
-    private static function parsePaopaoBiaoqingCallback($match)
-    {
-        return '<img class="biaoqing" src="/usr/themes/VOID/assets/libs/owo/biaoqing/paopao/'. str_replace('%', '', urlencode($match[1])) . '.png">';
-    }
-
-    /**
-     * 绚樱（樱花虾）表情回调函数
-     * 
-     * @return string
-     */
-    private static function parseSergestidShrimpBiaoqingCallback($match)
-    {
-        return '<img class="biaoqing" src="/usr/themes/VOID/assets/libs/owo/biaoqing/SergestidShrimp/'. str_replace('%', '', urlencode($match[1])) . '.png">';
-    }
-
-    /**
-     * 蛆音娘表情回调函数
-     * 
-     * @return string
-     */
-    private static function parseQuyinBiaoqingCallback($match)
-    {
-        return '<img class="biaoqing" src="/usr/themes/VOID/assets/libs/owo/biaoqing/quyin/'. str_replace('%', '', urlencode($match[1])) . '.png">';
-    }
-
-    /**
-     * Menhera 酱表情回调函数
-     *
-     * @return string
-     */
-    private static function parseMenheraBiaoqingCallback($match)
-    {
-        return '<img class="biaoqing" src="/usr/themes/VOID/assets/libs/owo/biaoqing/menhera/'. str_replace('%', '', urlencode($match[1])) . '.png">';
     }
 
     /**
