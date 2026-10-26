@@ -8,12 +8,16 @@
 */ 
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 $setting = $GLOBALS['VOIDSetting'];
-$banner = $setting['defaultBanner'];
+$banner = Utils::getDefaultBanner($setting);
 $blur = false;
+$bannerBlur = intval($setting['indexBannerBlur']);
 
 if($this->is('post') || $this->is('page')) {
     $banner = $this->fields->bannerStyle < 2 ? $this->fields->banner : '';
     $blur = $this->fields->bannerStyle == 1;
+    if($blur) $bannerBlur = 15;
+} else {
+    $blur = $bannerBlur > 0;
 }
 ?>
 
@@ -25,7 +29,7 @@ if($this->is('post') || $this->is('page')) {
         if($this->is('archive') && !$this->have()) echo ' not-found'; ?>">
 
     <?php if(!empty($banner)): ?>
-        <div id="banner" class="<?php if($blur) echo 'blur'; ?>">
+        <div id="banner" class="<?php if($blur) echo 'blur'; ?>"<?php if($blur && $bannerBlur > 0) echo ' style="--banner-blur: '.$bannerBlur.'px"'; ?>>
             <?php if($setting['browserLevelLoadingLazy']): ?>
                 <img class="lazyload browserlevel-lazy" src="<?php echo $banner; ?>" loading="lazy">
             <?php else: ?>
@@ -62,7 +66,7 @@ if($this->is('post') || $this->is('page')) {
             <?php if(!$this->is('archive')): ?>
                 <p class="post-meta">
                     <?php if($this->template == 'Archives.php') {
-                        echo Utils::getCatNum()." 分类 × ".Utils::getPostNum()." 文章 × ".Utils::getTagNum()." 标签";
+                        echo Utils::getCatNum()." 分类 × ".Utils::getPostNum()." 文章 × ".Utils::getAuthorNum()." 作者 × ".Utils::getTagNum()." 标签";
                         if($setting['VOIDPlugin']) echo ' × <span id="totalWordCount"></span> 字';
                     } else{ ?>
                         <span><a href="<?php $this->author->permalink(); ?>"><?php $this->author(); ?></a></span>&nbsp;•&nbsp;

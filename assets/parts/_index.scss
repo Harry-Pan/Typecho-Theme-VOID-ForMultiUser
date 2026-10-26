@@ -25,7 +25,7 @@ main{
             width: 100%;
             height: 100%;
             &.blur {
-                filter: brightness(0.5) blur(15px)!important;
+                filter: brightness(0.5) blur(var(--banner-blur, 15px))!important;
                 transform: scale(1.5)!important;
             }
             img {
@@ -434,16 +434,16 @@ section#index-list{
             }
             @media screen and (min-width: 1024.5px) {
                 &:hover {
-                    border-color: $highlightColor;
+                    border-color: var(--index-hover-color, #bd6262);
                     &.style-2 article .content-wrap {
                         background: rgba(0, 0, 0, 0.62);
                     }
                     &:not(.style-2):not(.full-content) article .title {
-                        color: $highlightColor!important;
+                        color: var(--index-hover-color, #bd6262)!important;
                     }
                 }
                 &.full-content article .title:hover {
-                    color: $highlightColor!important;
+                    color: var(--index-hover-color, #bd6262)!important;
                 }
             }
         }

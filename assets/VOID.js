@@ -416,6 +416,22 @@ var Share = {
         var url = 'https://twitter.com/intent/tweet?text=分享《'+ content.title + '》 @' + content.twitter + '%0a%0a' + content.excerpt
             + '%20' + content.url;
         window.open(url);
+    },
+
+    toQQ: function (item) {
+        var content = Share.parseItem(item);
+        var url = 'http://connect.qq.com/widget/shareqq/index.html?url=' + content.url
+            + '&sharesource=qzone&title=' + content.title
+            + '&pics=' + content.img + '&summary=' + content.excerpt;
+        window.open(url);
+    },
+
+    toQzone: function (item) {
+        var content = Share.parseItem(item);
+        var url = 'https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + content.url
+            + '&sharesource=qzone&title=' + content.title
+            + '&pics=' + content.img + '&summary=' + content.excerpt;
+        window.open(url);
     }
 };
 

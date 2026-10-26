@@ -137,17 +137,26 @@ class Utils
      */
     public static function addButton()
     {
-        echo '<script src="';
-        self::indexTheme('/assets/libs/owo/owo_03.js');
-        echo '"></script>';
+        // 若已启用 OwO 插件，则由插件提供编辑器表情按钮与样式；否则使用主题内置版本
+        $hasOwOPlugin = self::isPluginAvailable('OwO')
+            || self::isPluginAvailable('OwOHP')
+            || self::isPluginAvailable('TypechoPluginOwO');
+
+        if (!$hasOwOPlugin) {
+            echo '<script src="';
+            self::indexTheme('/assets/libs/owo/owo_03.js');
+            echo '"></script>';
+        }
 
         echo '<script src="';
         self::indexTheme('/assets/editor.js');
         echo '"></script>';
 
-        echo '<link rel="stylesheet" href="';
-        self::indexTheme('/assets/libs/owo/owo.min.css');
-        echo '" />';
+        if (!$hasOwOPlugin) {
+            echo '<link rel="stylesheet" href="';
+            self::indexTheme('/assets/libs/owo/owo.min.css');
+            echo '" />';
+        }
        
         echo '<style>#custom-field textarea,#custom-field input{width:100%}
         .OwO span{background:none!important;width:unset!important;height:unset!important}
@@ -180,17 +189,65 @@ class Utils
 
     /**
      * 判定内容是否过时
-     * 
+     *
+     * @param object $archive 文章对象
+     * @param int|null $days 自定义阈值（天），为 null 时读取主题设置
      * @return array
      */
-    public static function isOutdated($archive)
+    public static function isOutdated($archive, $days = null)
     {
+        if ($days === null) {
+            $setting = $GLOBALS['VOIDSetting'];
+            $days = isset($setting['outdatedDays']) ? intval($setting['outdatedDays']) : 90;
+        }
+        if ($days <= 0) {
+            $days = 90;
+        }
+
         $created = round((time()- $archive->created) / 3600 / 24);
         $updated = round((time()- $archive->modified) / 3600 / 24);
 
-        return array("is" => $created > 90,
+        return array("is" => $created > $days,
                     "created" => $created,
                     "updated" => $updated);
+    }
+
+    /**
+     * 解析顶部大图随机图池
+     *
+     * @return array
+     */
+    public static function getBannerImages($setting)
+    {
+        $raw = isset($setting['indexBannerImages']) ? $setting['indexBannerImages'] : '';
+        if (empty($raw)) {
+            return array();
+        }
+
+        $images = array();
+        foreach (preg_split('/[\r\n]+/', $raw) as $line) {
+            $line = trim($line);
+            if ($line !== '') {
+                $images[] = $line;
+            }
+        }
+
+        return $images;
+    }
+
+    /**
+     * 从随机图池中取一张作为默认顶部大图，未配置时返回空字符串
+     *
+     * @return string
+     */
+    public static function getDefaultBanner($setting)
+    {
+        $images = self::getBannerImages($setting);
+        if (empty($images)) {
+            return '';
+        }
+
+        return $images[array_rand($images)];
     }
 
     /**
@@ -253,6 +310,18 @@ class Utils
     }
 
     /**
+     * 作者数量
+     * 
+     * @return int
+     */
+    public static function getAuthorNum()
+    {
+        $db = Typecho_Db::get();
+        return $db->fetchObject($db->select(array('COUNT(uid)' => 'num'))
+                    ->from('table.users'))->num;
+    }
+
+    /**
      * 存在 VOID 插件且满足要求
      */
     public static function hasVOIDPlugin($req)
@@ -276,7 +345,12 @@ class Utils
 
         // 主题设置
         $themeSetting = array(
-            'defaultBanner' => '',
+            'indexBannerImages' => '',
+            'indexBannerBlur' => 3,
+            'indexHoverColor' => '#bd6262',
+            'outdatedNotice' => '1',
+            'outdatedDays' => 90,
+            'eggNotice' => '恭喜你！<br>本文是一篇彩蛋文章。',
             'enableMath' => false,
             'head' => '',
             'footer' => '',
@@ -299,6 +373,15 @@ class Utils
             }
         }
 
+        // 允许取值为 "0" 的设置项，不能被上面的 empty() 判断过滤掉
+        $zeroAllowed = array('outdatedNotice', 'indexBannerBlur', 'outdatedDays');
+        foreach ($zeroAllowed as $key) {
+            $value = $options->{$key};
+            if ($value !== null && $value !== '') {
+                $themeSetting[$key] = $value;
+            }
+        }
+
         // 一些类型变换
         $themeSetting['enableMath'] = boolval($themeSetting['enableMath']);
         $themeSetting['lazyload'] = boolval($themeSetting['lazyload']);
@@ -306,6 +389,9 @@ class Utils
         $themeSetting['pjax'] = boolval($themeSetting['pjax']);
         $themeSetting['serifincontent'] = boolval($themeSetting['serifincontent']);
         $themeSetting['indexStyle'] = intval($themeSetting['indexStyle']);
+        $themeSetting['outdatedNotice'] = boolval($themeSetting['outdatedNotice']);
+        $themeSetting['outdatedDays'] = intval($themeSetting['outdatedDays']);
+        $themeSetting['indexBannerBlur'] = intval($themeSetting['indexBannerBlur']);
 
         // 高级设置
         $advanceSetting = array(

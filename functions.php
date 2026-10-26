@@ -60,12 +60,24 @@ function themeConfig($form)
     echo '<script>var VOIDVersion='.$GLOBALS['VOIDVersion'].'</script>';
     echo '<script src="'.Helper::options()->themeUrl.'/assets/check_update.js"></script>';
 
-    $defaultBanner = new Typecho_Widget_Helper_Form_Element_Text('defaultBanner', null, '', '首页顶部大图', '可以填写随机图 API。');
-    $form->addInput($defaultBanner);
+    $indexBannerImages = new Typecho_Widget_Helper_Form_Element_Textarea('indexBannerImages', null, '', '顶部大图（随机图池）', '每行填写一个图片链接，每次访问从中随机选取一张显示。留空则不显示顶部大图。');
+    $form->addInput($indexBannerImages);
+    $indexBannerBlur = new Typecho_Widget_Helper_Form_Element_Text('indexBannerBlur', null, '3', '顶部大图模糊度', '单位 px，填写 0 表示不模糊。文章页「主图样式」选择模糊效果时沿用各自的设定。');
+    $form->addInput($indexBannerBlur);
     $indexBannerTitle = new Typecho_Widget_Helper_Form_Element_Text('indexBannerTitle', null, '', '首页顶部大标题', '不要太长');
     $form->addInput($indexBannerTitle);
     $indexBannerSubtitle = new Typecho_Widget_Helper_Form_Element_Text('indexBannerSubtitle', null, '', '首页顶部小标题', '');
     $form->addInput($indexBannerSubtitle);
+    $indexHoverColor = new Typecho_Widget_Helper_Form_Element_Text('indexHoverColor', null, '#bd6262', '首页列表悬停色', '鼠标悬停在首页文章卡片上时的描边与标题颜色，例如 #6a96f2。');
+    $form->addInput($indexHoverColor);
+
+
+    $outdatedNotice = new Typecho_Widget_Helper_Form_Element_Radio('outdatedNotice', array('1' => '显示', '0' => '不显示'), '1', '文章过时提醒', '是否在文章页顶部显示「本文编写于 N 天前」的提醒。');
+    $form->addInput($outdatedNotice);
+    $outdatedDays = new Typecho_Widget_Helper_Form_Element_Text('outdatedDays', null, '90', '过时提醒阈值（天）', '文章发布超过该天数后才显示过时提醒。');
+    $form->addInput($outdatedDays);
+    $eggNotice = new Typecho_Widget_Helper_Form_Element_Textarea('eggNotice', null, '恭喜你！<br>本文是一篇彩蛋文章。', '彩蛋文章提示内容', '文章自定义字段「彩蛋文章」选为「是」时，在正文顶部显示的内容。支持 HTML。');
+    $form->addInput($eggNotice);
 
     $colorScheme = new Typecho_Widget_Helper_Form_Element_Radio('colorScheme', array('0' => '自动切换', '1' => '日间模式', '2' => '夜间模式'), '0', '主题颜色模式', '选择主题颜色模式。自动模式下每天 22:00 到次日 06:59 会显示为夜间模式。');
     $form->addInput($colorScheme);
@@ -122,6 +134,8 @@ function themeFields(Typecho_Widget_Helper_Layout $layout)
     $layout->addItem($showfullcontent);
     $showTOC = new Typecho_Widget_Helper_Form_Element_Select('showTOC', array('0' => '不显示目录', '1' => '显示目录'), '0', '文章目录', '是否显示文章目录。');
     $layout->addItem($showTOC);
+    $showMode = new Typecho_Widget_Helper_Form_Element_Select('showMode', array('0' => '普通文章（展示在主页）', '1' => '彩蛋文章（不展示在主页）'), '0', '彩蛋文章', '是否在主页显示该文章（不影响个人页和搜索的显示）。提示内容可在主题设置中自定义。');
+    $layout->addItem($showMode);
 }
 
 $GLOBALS['VOIDSetting'] = Utils::getVOIDSettings();

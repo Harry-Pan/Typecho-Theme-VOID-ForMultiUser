@@ -24,8 +24,14 @@ $setting = $GLOBALS['VOIDSetting'];
             <section id="post" class="float-up">
                 <article class="post yue">
 
-                    <?php $postCheck = Utils::isOutdated($this); if($postCheck["is"] && $this->is('post')): ?>
-                        <p class="notice">请注意，本文编写于 <?php echo $postCheck["created"]; ?> 天前，最后修改于 <?php echo $postCheck["updated"]; ?> 天前，其中某些信息可能已经过时。</p>
+                    <?php if($setting['outdatedNotice']): ?>
+                        <?php $postCheck = Utils::isOutdated($this, $setting['outdatedDays']); if($postCheck["is"] && $this->is('post')): ?>
+                            <p class="notice">请注意，本文编写于 <?php echo $postCheck["created"]; ?> 天前，最后修改于 <?php echo $postCheck["updated"]; ?> 天前，其中某些信息可能已经过时。</p>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if($this->fields->showMode == 1): ?>
+                        <p class="notice"><?php echo $setting['eggNotice']; ?></p>
                     <?php endif; ?>
 
                     <div class="articleBody" class="full">
@@ -65,12 +71,23 @@ $setting = $GLOBALS['VOIDSetting'];
                             </a>
                         <?php endif; ?>
                         
-                        <a aria-label="分享到微博" href="javascript:void(0);" onclick="Share.toWeibo(this);" class="social-button-icon"><i class="voidicon-weibo"></i></a>
-                        <a aria-label="分享到Twitter" href="javascript:void(0);" onclick="Share.toTwitter(this);" class="social-button-icon"><i class="voidicon-twitter"></i></a>
+                        <a aria-label="分享到微博" href="javascript:void(0);" onclick="webshare()" class="social-button-icon"><i class="voidicon-weibo"></i></a>
+                        <a aria-label="分享到QQ空间" href="javascript:void(0);" onclick="Share.toQzone(this);" class="social-button-icon"><i class="voidicon-qq"></i></a>
                     </div>
                 </article>
 
                 <script>
+                function webshare(){
+                    navigator.share({
+                        title: this.title,
+                        url: this.url,
+                        text: this.excerpt
+                    }).then(() => {
+                        console.log('Thanks for sharing!');
+                    }).catch((error) => {
+                        console.error('Sharing error', error);
+                    });
+                }
                 (function () {
                     $.each($('iframe'), function(i, item){
                         var src = $(item).attr('src');

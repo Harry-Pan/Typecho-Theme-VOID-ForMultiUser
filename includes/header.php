@@ -9,7 +9,7 @@
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 $setting = $GLOBALS['VOIDSetting'];
-$banner = $setting['defaultBanner'];
+$banner = Utils::getDefaultBanner($setting);
 if($this->is('post') || $this->is('page')) {
     $banner = $this->fields->bannerStyle < 2 ? $this->fields->banner : '';
 }
@@ -45,7 +45,7 @@ if($this->is('post') || $this->is('page')) {
         if(Helper::options()->lazyload == '1') {
             echo ' lazyload-img';
         }
-    ?>">
+    ?>"<?php if(!empty($setting['indexHoverColor'])) echo ' style="--index-hover-color: '.htmlspecialchars($setting['indexHoverColor']).'"'; ?>>
     
     <header class="header-mode-<?php echo $setting['headerMode']; ?> <?php if(empty($banner)) echo 'force-dark no-banner'; ?>">
         <div class="container wider">
@@ -54,11 +54,31 @@ if($this->is('post') || $this->is('page')) {
                     <span></span>
                 </a>
                 <a class="brand" href="<?php Utils::index(''); ?>"><?php if($setting['name']) echo $setting['name']; else echo $this->options->title; ?></a>
+                <a class="tarot-trigger">看看运势</a>
+                <a href="<?php Utils::index(''); ?>goodluck">随缘看看</a>
                 <a href="<?php Utils::index(''); ?>">首页</a>
                 <?php $this->widget('Widget_Contents_Page_List')->parse('<a href="{permalink}">{title}</a>'); ?>
                 <span class="dropdown">分类
                     <ul>
                         <?php $this->widget('Widget_Metas_Category_List')->parse('<li><a href="{permalink}">{name}</a></li>'); ?>
+                    </ul>
+                </span>
+                <span class="dropdown">作者
+                    <ul class="author-list">
+                        <?php $this->widget('Widget_Users_AuthorList')->to($voidAuthors); ?>
+                        <?php while($voidAuthors->next()): ?>
+                            <li><a href="<?php $voidAuthors->permalink(); ?>"><?php $voidAuthors->screenName(); ?></a></li>
+                        <?php endwhile; ?>
+                    </ul>
+                </span>
+                <span class="dropdown">关于本站
+                    <ul>
+                        <li><a target="_blank" href="https://www.harrypan.cn/227.html">归档页</a></li>
+                        <?php if($this->user->hasLogin()): ?>
+                        <li><a target="_blank" href="https://www.harrypan.cn/archives/234/">全站食用指南</a></li>
+                        <?php else: ?>
+                        <li><a target="_blank" href="https://www.harrypan.cn/archives/260/">本站食用指南</a></li>
+                        <?php endif; ?>
                     </ul>
                 </span>
                 <?php if($setting['nav']){ foreach ($setting['nav'] as $listItem): ?>
@@ -96,12 +116,33 @@ if($this->is('post') || $this->is('page')) {
     <div id="nav-mobile">
         <section id="pages" data-title="PAGES">
             <nav>
+                <a href="<?php Utils::index(''); ?>">首页</a>
                 <?php $this->widget('Widget_Contents_Page_List')->parse('<a href="{permalink}">{title}</a>'); ?>
+                <a class="tarot-trigger">看看运势</a>
+                <a href="<?php Utils::index(''); ?>goodluck">随缘看看</a>
             </nav>
         </section>
         <section id="categories" data-title="CATEGORIES">
             <nav>
                 <?php $this->widget('Widget_Metas_Category_List')->parse('<a href="{permalink}">{name}</a>'); ?>
+            </nav>
+        </section>
+        <section id="author" data-title="AUTHORS">
+            <nav>
+                <?php $this->widget('Widget_Users_AuthorList')->to($voidAuthorsMobile); ?>
+                <?php while($voidAuthorsMobile->next()): ?>
+                    <a href="<?php $voidAuthorsMobile->permalink(); ?>"><?php $voidAuthorsMobile->screenName(); ?></a>
+                <?php endwhile; ?>
+            </nav>
+        </section>
+        <section id="about" data-title="ABOUT">
+            <nav>
+                <a target="_blank" href="https://www.harrypan.cn/227.html">归档页</a>
+                <?php if($this->user->hasLogin()): ?>
+                <a target="_blank" href="https://www.harrypan.cn/archives/234/">全站食用指南</a>
+                <?php else: ?>
+                <a target="_blank" href="https://www.harrypan.cn/archives/260/">本站食用指南</a>
+                <?php endif; ?>
             </nav>
         </section>
         <?php if($setting['nav']){ foreach ($setting['nav'] as $listItem): ?>

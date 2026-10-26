@@ -136,10 +136,10 @@ $setting = $GLOBALS['VOIDSetting'];
         <?php endif; ?>
         <script src="<?php Utils::indexTheme('/assets/VOID.js'); ?>"></script>
         <script>
-        if($(".OwO").length > 0){
+        if($(".Typecho_Plugin_OwO").length > 0 && typeof Typecho_Plugin_OwO === 'undefined'){
             new OwO({
                 logo: 'OωO',
-                container: document.getElementsByClassName('OwO')[0],
+                container: document.getElementsByClassName('Typecho_Plugin_OwO')[0],
                 target: document.getElementsByClassName('input-area')[0],
                 api: '<?php Utils::indexTheme('/assets/libs/owo/OwO_03.json'); ?>',
                 position: 'down',

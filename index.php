@@ -30,6 +30,7 @@ if(!Utils::isPjax()){
         <section id="index-list" class="float-up">
             <ul id="masonry">
             <?php while($this->next()): ?>
+            <?php if($this->fields->showMode == 0): ?>
                 <?php $bannerAsCover = $this->fields->bannerascover; if($this->fields->banner == '') $bannerAsCover='0'; ?>
                 <li id="p-<?php $this->cid(); ?>" class="masonry-item style-<?php 
                         if($this->fields->showfullcontent=='1') {
@@ -73,6 +74,7 @@ if(!Utils::isPjax()){
                                     <?php if($setting['VOIDPlugin']): ?>
                                         <span class="word-count">+ <?php echo $this->wordCount; ?> 字</span>
                                     <?php endif; ?>
+                                    BY <?php $this->author(); ?>
                                 </div>
 
                                 <?php if($this->fields->showfullcontent == '1'): ?>
@@ -102,6 +104,7 @@ if(!Utils::isPjax()){
                     <?php endif; ?>
                 </li>
                 <script>VOID_Ui.MasonryCtrler.watch("p-<?php $this->cid(); ?>");</script>
+            <?php endif; ?>
             <?php endwhile; ?>
             </ul>
         </section>

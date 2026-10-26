@@ -61,7 +61,7 @@ $this->widget('VOID_Widget_Comments_Archive', $parameter)->to($comments);
                             style="resize:none;"><?php $this->remember('text'); ?></textarea>
                     </p>
                     <p class="comment-buttons">
-                        <span class="OwO" aria-label="表情按钮" role="button"></span>
+                        <span class="Typecho_Plugin_OwO" aria-label="表情按钮" role="button"></span>
                         <?php if(Utils::isPluginAvailable('CommentToMail') || Utils::isPluginAvailable('Mailer')): ?>
                         <span class="comment-mail-me">
                             <input aria-label="有回复时通知我" name="receiveMail" type="checkbox" value="yes" id="receiveMail" checked />
