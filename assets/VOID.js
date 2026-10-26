@@ -84,6 +84,14 @@ var VOID_Content = {
     parseUrl: function () {
         var domain = document.domain;
         $('a:not(a[href^="#"]):not(".post-like")').each(function (i, item) {
+            /*
+             * javascript: 与空链接不是真实超链接，其 hostname 为空串，
+             * 若继续按「hostname != domain」处理会被误判为外链并加上
+             * target="_blank"，点击后新开一个执行 javascript:void(0) 的空白页。
+             */
+            if (!item.href || item.protocol === 'javascript:') {
+                return;
+            }
             if ((!$(item).attr('target') || (!$(item).attr('target') == '' && !$(item).attr('target') == '_self'))) {
                 if (item.hostname != domain) {
                     $(item).attr('target', '_blank');
