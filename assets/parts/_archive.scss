@@ -86,7 +86,7 @@ section#archive-list{
                     }
                     /* 条目末尾的作者名，例如「-HarryPan」 */
                     span.archive-author {
-                        margin-left: 0.6em;
+                        margin-left: 0.45em;
                         font-size: 0.9rem;
                         color: rgba(0,0,0,0.3);
                         .theme-dark &{
@@ -96,8 +96,10 @@ section#archive-list{
                     h4{
                         display: inline;
                     }
-                    &.show-word-count::after{
-                        content: " ＋ " attr(data-words) " 字";
+                    /* 字数与作者改为真实元素（原字数用 ::after 伪元素，
+                       伪元素始终排在所有内容之后，无法让作者显示在其后） */
+                    span.archive-words {
+                        margin-left: 0.2em;
                         font-size: 0.9rem;
                         color: rgba(0,0,0,0.3);
                         .theme-dark &{

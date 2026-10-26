@@ -53,10 +53,10 @@ if(!Utils::isPjax()){
                     <ul>
                     <?php foreach($posts as $created => $post): ?>
                         <li>
-                            <a class="archive-title<?php if($setting['VOIDPlugin']) echo ' show-word-count'; ?>" 
+                            <a class="archive-title" 
                                 data-words="<?php if($setting['VOIDPlugin']) echo $post['words']; ?>" 
                                 href="<?php echo $post['permalink']; ?>">
-                                <span class="date"><?php echo date('m-d', $created); ?></span><?php echo $post['title']; ?><?php if(!empty($post['author'])): ?><span class="archive-author">-<?php echo $post['author']; ?></span><?php endif; ?>
+                                <span class="date"><?php echo date('m-d', $created); ?></span><?php echo $post['title']; ?><?php if($setting['VOIDPlugin']): ?><span class="archive-words">＋ <?php echo $post['words']; ?> 字</span><?php endif; ?><?php if(!empty($post['author'])): ?><span class="archive-author">-<?php echo $post['author']; ?></span><?php endif; ?>
                             </a>
                         </li>
                     <?php endforeach; ?>
