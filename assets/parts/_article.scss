@@ -721,4 +721,52 @@ article {
         }
     }
 }
-/* 注脚：样式由 assets/libs/littlefoot/littlefoot.css 提供（原 bigfoot 覆盖规则已移除） */
+/*
+ * 注脚（littlefoot）主题化适配
+ *
+ * littlefoot.css 用一组 CSS 自定义属性控制外观，变量定义在包裹每个脚注的
+ * <span class="littlefoot"> 上（见 libs/littlefoot/littlefoot.css 开头的 .littlefoot 规则）。
+ * 这里只覆盖变量值，不复制它的布局/动画样式，便于后续跟随上游升级。
+ *
+ * 另外两处为 littlefoot 默认值带来的问题：
+ *   - --popover-font-family 默认 initial，会让脚注正文回落到浏览器默认衬线字体，
+ *     这里改为跟随主题正文字体（启用衬线体时用思源宋体栈）
+ *   - --popover-z-index 默认 1，低于主题 header(3) 等元素，提高避免窄屏抽屉被遮挡
+ */
+.littlefoot {
+    --button-background-color: #{rgba(#000, 0.28)};
+    --button-text-color: #fff;
+    --button-active-background-color: #{rgba(#000, 0.6)};
+    --button-active-text-color: #fff;
+
+    --popover-background-color: #{$bgColor};
+    --popover-text-color: #{$textColor};
+    --popover-border: 1px solid #{$borderColor};
+    --popover-border-radius: 0.5rem;
+    --popover-shadow: 0 4px 18px #{rgba(#000, 0.12)};
+    --popover-scroll-indicator-color: #{$fadeColor};
+
+    --popover-font-family: #{$void-font-default};
+    --popover-font-size: inherit;
+    --popover-line-height: 1.78;
+
+    --popover-z-index: 10;
+
+    .theme-dark & {
+        --button-background-color: #{rgba(#fff, 0.28)};
+        --button-text-color: #{$td-bgColor-dark};
+        --button-active-background-color: #{rgba(#fff, 0.6)};
+        --button-active-text-color: #{$td-bgColor-dark};
+
+        --popover-background-color: #{$td-bgColor-light};
+        --popover-text-color: #{$td-textColor};
+        --popover-border: 1px solid #{$td-borderColor};
+        --popover-shadow: 0 4px 18px #{rgba(#000, 0.5)};
+        --popover-scroll-indicator-color: #{$td-textColor-dark};
+    }
+}
+
+/* 启用衬线体时，脚注正文跟随思源宋体 */
+.serif .littlefoot {
+    --popover-font-family: #{$void-font-serif};
+}
