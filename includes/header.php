@@ -59,12 +59,12 @@ if($this->is('post') || $this->is('page')) {
                 <a href="<?php Utils::index(''); ?>">首页</a>
                 <?php $this->widget('Widget_Contents_Page_List')->parse('<a href="{permalink}">{title}</a>'); ?>
                 <span class="dropdown">分类
-                    <ul>
+                    <ul class="nav-columns">
                         <?php $this->widget('Widget_Metas_Category_List')->parse('<li><a href="{permalink}">{name}</a></li>'); ?>
                     </ul>
                 </span>
                 <span class="dropdown">作者
-                    <ul class="author-list">
+                    <ul class="nav-columns">
                         <?php $this->widget('Widget_Users_AuthorList')->to($voidAuthors); ?>
                         <?php while($voidAuthors->next()): ?>
                             <li><a href="<?php $voidAuthors->permalink(); ?>"><?php $voidAuthors->screenName(); ?></a></li>

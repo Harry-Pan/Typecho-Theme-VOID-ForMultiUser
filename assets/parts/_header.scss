@@ -138,10 +138,12 @@ header{
                             color: $headerTextColor-highlight;
                         }
                     }
-                    /* 作者列表：多列排布，避免下拉过长 */
-                    &.author-list{
+                    /*
+                     * 多列下拉：分类、作者这类条目较多的菜单按列自动流动，
+                     * 避免下拉列表沿垂直方向过长（列数随视口宽度递减）
+                     */
+                    &.nav-columns{
                         width: max-content;
-                        display: none;
                         column-count: 3;
                         column-gap: 1rem;
                         li{
@@ -154,9 +156,6 @@ header{
                     }
                 }
                 &:hover ul {
-                    display: block;
-                }
-                &:hover ul.author-list {
                     display: block;
                 }
             }
