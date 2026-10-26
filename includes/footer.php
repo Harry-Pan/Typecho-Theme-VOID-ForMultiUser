@@ -130,11 +130,11 @@ $setting = $GLOBALS['VOIDSetting'];
         }
         </script>
         <?php endif; ?>
-        <script data-manual src="<?php Utils::indexTheme('/assets/bundle.js'); ?>"></script>
+        <script data-manual src="<?php Utils::asset('/assets/bundle.js'); ?>"></script>
         <?php if($setting['enableMath']): ?>
         <script src='<?php Utils::indexTheme('/assets/libs/mathjax/2.7.4/MathJax.js'); ?>'></script>
         <?php endif; ?>
-        <script src="<?php Utils::indexTheme('/assets/VOID.js'); ?>"></script>
+        <script src="<?php Utils::asset('/assets/VOID.js'); ?>"></script>
         <?php
         /*
          * 表情面板由 OwO 插件负责初始化（Plugin::footer 内 new Typecho_Plugin_OwO）。

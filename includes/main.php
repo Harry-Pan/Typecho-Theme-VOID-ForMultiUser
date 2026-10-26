@@ -75,14 +75,14 @@ $setting = $GLOBALS['VOIDSetting'];
                         <a aria-label="分享到微博" title="分享到微博" href="javascript:void(0);" onclick="Share.toWeibo(this);" class="social-button-icon"><i class="voidicon-weibo"></i></a>
                         <a aria-label="分享到QQ" title="分享到QQ" href="javascript:void(0);" onclick="Share.toQQ(this);" class="social-button-icon"><i class="voidicon-qq"></i></a>
                         <a aria-label="分享到QQ空间" title="分享到QQ空间" href="javascript:void(0);" onclick="Share.toQzone(this);" class="social-button-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.3 6.2 20.4l1.1-6.5L2.6 9.3l6.5-.9z"/></svg>
+                            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 2.5l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.3 6.2 20.4l1.1-6.5L2.6 9.3l6.5-.9z"/></svg>
                         </a>
                         <a aria-label="复制链接" title="复制链接" href="javascript:void(0);" onclick="Share.copyLink(this);" class="social-button-icon"><i class="voidicon-link"></i></a>
                         <a aria-label="二维码" title="二维码" href="javascript:void(0);" onclick="Share.showQR(this);" class="social-button-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm9-2h3v3h-3v-3zm5 0h2v2h-2v-2zm-5 5h2v2h-2v-2zm3 0h4v2h-4v-2z"/></svg>
+                            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm9-2h3v3h-3v-3zm5 0h2v2h-2v-2zm-5 5h2v2h-2v-2zm3 0h4v2h-4v-2z"/></svg>
                         </a>
                         <a aria-label="系统分享" title="系统分享" href="javascript:void(0);" onclick="Share.toNative(this);" class="social-button-icon native-share">
-                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l4 4h-3v7h-2V7H8l4-4zM5 12h2v7h10v-7h2v9H5v-9z"/></svg>
+                            <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M12 3l4 4h-3v7h-2V7H8l4-4zM5 12h2v7h10v-7h2v9H5v-9z"/></svg>
                         </a>
                     </div>
                     <div hidden id="share-qrcode" class="share-qrcode-wrap">

@@ -41,6 +41,22 @@ class Utils
     }
 
     /**
+     * 输出带版本号的静态资源路径
+     *
+     * 源码模式下资源文件名不含哈希，而浏览器/nginx 可能长期缓存，
+     * 这里按文件 mtime 追加 ?v= 参数，保证改动后立刻生效；
+     * 构建模式（文件名带哈希）下追加也无副作用。
+     *
+     * @return void
+     */
+    public static function asset($path)
+    {
+        $file = dirname(__DIR__) . '/' . ltrim($path, '/');
+        $time = is_file($file) ? filemtime($file) : false;
+        self::indexTheme($time ? $path . '?v=' . $time : $path);
+    }
+
+    /**
      * 输出头像链接
      * 
      * @return void
@@ -140,7 +156,7 @@ class Utils
         // 表情编辑器按钮与样式由 OwO 插件（TypechoPluginOwO）提供，
         // 主题仅保留「图集」按钮与评论表单的响应式样式
         echo '<script src="';
-        self::indexTheme('/assets/editor.js');
+        self::asset('/assets/editor.js');
         echo '"></script>';
        
         echo '<style>#custom-field textarea,#custom-field input{width:100%}

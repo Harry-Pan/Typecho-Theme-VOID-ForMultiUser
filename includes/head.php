@@ -57,11 +57,11 @@ if (isset($_POST['void_action'])) {
     <?php $this->header('commentReply=&description=&'); ?>
 
     <!--CSS-->
-    <link rel="stylesheet" href="<?php Utils::indexTheme('/assets/bundle.css');?>">
-    <link rel="stylesheet" href="<?php Utils::indexTheme('/assets/VOID.css');?>">
+    <link rel="stylesheet" href="<?php Utils::asset('/assets/bundle.css');?>">
+    <link rel="stylesheet" href="<?php Utils::asset('/assets/VOID.css');?>">
 
     <!--JS-->
-    <script src="<?php Utils::indexTheme('/assets/bundle-header.js'); ?>"></script>
+    <script src="<?php Utils::asset('/assets/bundle-header.js'); ?>"></script>
     <script>
     VOIDConfig = {
         PJAX : <?php echo $setting['pjax'] ? 'true' : 'false'; ?>,
@@ -90,7 +90,7 @@ if (isset($_POST['void_action'])) {
         isDev: true
     }
     </script>
-    <script src="<?php Utils::indexTheme('/assets/header.js'); ?>"></script>
+    <script src="<?php Utils::asset('/assets/header.js'); ?>"></script>
     
     <?php echo $setting['head']; ?>
     <style>
