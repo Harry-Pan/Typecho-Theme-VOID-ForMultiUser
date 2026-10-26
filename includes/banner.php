@@ -82,6 +82,9 @@ if($this->is('post') || $this->is('page')) {
                         <?php endif;?>
                     <?php } ?>
                 </p>
+            <?php elseif($this->have()): ?>
+                <?php /* 归档页（分类 / 标签 / 作者 / 搜索）：复用文章页标题下的 .post-meta 小字样式 */ ?>
+                <p class="post-meta">共有 <?php echo $this->getTotal(); ?> 篇文章</p>
             <?php endif;?>
         </div>
     <?php elseif($this->is('index')): ?>
