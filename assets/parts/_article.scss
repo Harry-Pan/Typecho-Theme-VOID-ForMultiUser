@@ -632,10 +632,17 @@ article {
     a.social-button-icon {
         border: none !important;
         font-size: 1.5rem;
+        line-height: 1;
+        /* 统一成固定方形盒子并居中，消除字体图标与 SVG 的对齐差异 */
         display: inline-flex;
         align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
         vertical-align: bottom;
         i {
+            display: block;
+            line-height: 1;
             color: $fadeColor;
             .theme-dark &{
                 color: $td-textColor-dark;
@@ -644,11 +651,15 @@ article {
                 color: #ff5268
             }
         }
-        /* 图标字体里没有的按钮（QQ空间 / 二维码 / 系统分享）使用内联 SVG */
+        /*
+         * 图标字体里没有的按钮（QQ空间 / 二维码 / 系统分享）使用内联 SVG。
+         * 三者的 viewBox 均已收紧到路径墨迹边界，因此 1.35rem 即实际可见尺寸，
+         * 与字体图标的可见高度（0.82~1.0em，平均约 0.9em）基本一致。
+         */
         svg {
             display: block;
-            width: 1.5rem;
-            height: 1.5rem;
+            width: 1.35rem;
+            height: 1.35rem;
             fill: $fadeColor;
             .theme-dark & {
                 fill: $td-textColor-dark;
