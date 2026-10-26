@@ -131,9 +131,33 @@ var VOID_Content = {
         Prism.highlightAll();
     },
 
-    bigfoot: function () {
-        // 初始化注脚
-        $.bigfoot({ actionOriginalFN: 'ignore' });
+    // 初始化注脚（littlefoot，原 bigfoot.js 的替代）
+    footnotes: function () {
+        // littlefoot 的 UMD 导出为 { default: fn }，兼容两种取法
+        var littlefoot = window.littlefoot;
+        if (littlefoot && typeof littlefoot.default === 'function') {
+            littlefoot = littlefoot.default;
+        }
+        if (typeof littlefoot !== 'function') {
+            return;
+        }
+        littlefoot({
+            activateOnHover: false,
+            hoverDelay: 250
+        });
+
+        // littlefoot 内置的按钮提示为英文（See Footnote N / Footnote N），此处本地化
+        $('.littlefoot__button').each(function () {
+            var num = $(this).attr('data-footnote-id');
+            if (!num) {
+                return;
+            }
+            $(this).attr('title', '查看注脚 ' + num);
+            var caption = this.querySelector('title');
+            if (caption) {
+                caption.textContent = '注脚 ' + num;
+            }
+        });
     },
 
     pangu: function () {
@@ -172,7 +196,7 @@ var VOID = {
         VOID_Content.highlight();
         VOID_Content.parseUrl();
         VOID_Content.pangu();
-        VOID_Content.bigfoot();
+        VOID_Content.footnotes();
         VOID_Content.math();
         VOID_Content.hyphenate();
         
@@ -227,7 +251,7 @@ var VOID = {
         VOID_Content.math();
         VOID_Content.hyphenate();
         VOID_Content.pangu();
-        VOID_Content.bigfoot();
+        VOID_Content.footnotes();
 
         VOID_Vote.reload();
 

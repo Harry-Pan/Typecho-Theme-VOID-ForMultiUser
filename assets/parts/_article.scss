@@ -721,20 +721,4 @@ article {
         }
     }
 }
-.bigfoot-footnote__tooltip {
-    .theme-dark & {
-        background: $td-borderColor;
-    }
-}
-.bigfoot-footnote {
-    .theme-dark & {
-        background: $td-borderColor;
-    }
-}
-.bigfoot-footnote__content {
-    padding: 0.5em 0.8em;
-    .theme-dark & {
-        background: $td-bgColor-dark;
-        color: $td-textColor;
-    }
-}
+/* 注脚：样式由 assets/libs/littlefoot/littlefoot.css 提供（原 bigfoot 覆盖规则已移除） */
