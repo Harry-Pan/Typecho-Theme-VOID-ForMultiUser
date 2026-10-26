@@ -121,13 +121,23 @@ if (isset($_POST['void_action'])) {
     </style>
     <?php endif; ?>
 
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap" rel="stylesheet">
+    <?php
+    /*
+     * 字体异步加载：
+     * media="print" 让浏览器以低优先级拉取字体样式表，不阻塞首屏渲染；
+     * 加载完成后把 media 切回 all 才生效。禁用 JS 时由 <noscript> 兜底。
+     */
+    ?>
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap"></noscript>
     <?php if(Utils::isSerif($setting)): ?>
-        <link id="stylesheet_noto" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,400,700&display=swap&subset=chinese-simplified" rel="stylesheet">
+        <link id="stylesheet_noto" rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,400,700&display=swap&subset=chinese-simplified">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,400,700&display=swap&subset=chinese-simplified"></noscript>
     <?php endif; ?>
 
     <?php if($setting['useFiraCodeFont']): ?>
-        <link href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap" rel="stylesheet">
+        <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap">
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap"></noscript>
         <style>.yue code, .yue tt {font-family: "Fira Code", Menlo, Monaco, Consolas, "Courier New", monospace}</style>
     <?php endif; ?>
 
