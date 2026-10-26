@@ -65,10 +65,9 @@ if($this->is('post') || $this->is('page')) {
                 </span>
                 <span class="dropdown">作者
                     <ul class="nav-columns">
-                        <?php $this->widget('Widget_Users_AuthorList')->to($voidAuthors); ?>
-                        <?php while($voidAuthors->next()): ?>
-                            <li><a href="<?php $voidAuthors->permalink(); ?>"><?php $voidAuthors->screenName(); ?></a></li>
-                        <?php endwhile; ?>
+                        <?php foreach (Authors::all() as $voidAuthor): ?>
+                            <li><a href="<?php echo $voidAuthor['permalink']; ?>"><?php echo $voidAuthor['screenName']; ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </span>
                 <span class="dropdown">关于本站
@@ -129,10 +128,9 @@ if($this->is('post') || $this->is('page')) {
         </section>
         <section id="author" data-title="AUTHORS">
             <nav>
-                <?php $this->widget('Widget_Users_AuthorList')->to($voidAuthorsMobile); ?>
-                <?php while($voidAuthorsMobile->next()): ?>
-                    <a href="<?php $voidAuthorsMobile->permalink(); ?>"><?php $voidAuthorsMobile->screenName(); ?></a>
-                <?php endwhile; ?>
+                <?php foreach (Authors::all() as $voidAuthor): ?>
+                    <a href="<?php echo $voidAuthor['permalink']; ?>"><?php echo $voidAuthor['screenName']; ?></a>
+                <?php endforeach; ?>
             </nav>
         </section>
         <section id="about" data-title="ABOUT">

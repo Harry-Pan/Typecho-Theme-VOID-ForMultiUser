@@ -15,6 +15,7 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 error_reporting(0);
 
 require_once('libs/Utils.php');
+require_once('libs/Authors.php');
 require_once('libs/Contents.php');
 require_once('libs/Comments.php');
 
