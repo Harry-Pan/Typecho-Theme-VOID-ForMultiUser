@@ -169,6 +169,7 @@ var VOID = {
         VOID_Content.hyphenate();
         
         VOID_Vote.reload();
+        Share.init();
         AjaxComment.init();
 
         $('body').on('click', function (e) {
@@ -223,7 +224,8 @@ var VOID = {
         VOID_Vote.reload();
 
         // 重载表情：由 OwO 插件负责，主题不再介入
-        
+        Share.init();
+
         AjaxComment.init();
     },
 
@@ -421,6 +423,99 @@ var Share = {
             + '&sharesource=qzone&title=' + content.title
             + '&pics=' + content.img + '&summary=' + content.excerpt;
         window.open(url);
+    },
+
+    // 调用系统分享面板（仅支持的浏览器）
+    toNative: function (item) {
+        if (!navigator.share) {
+            VOID.alert('当前浏览器不支持系统分享');
+            return;
+        }
+        var content = Share.parseItem(item);
+        navigator.share({
+            title: content.title,
+            text: content.excerpt,
+            url: content.url
+        }).catch(function () {
+            // 用户取消或分享失败，静默处理
+        });
+    },
+
+    // 复制文章链接，优先 Clipboard API，失败回退 execCommand
+    copyLink: function (item) {
+        var content = Share.parseItem(item);
+        var url = content.url || window.location.href;
+
+        var done = function () {
+            VOID.alert('链接已复制');
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(url).then(done, function () {
+                Share.legacyCopy(url, done);
+            });
+        } else {
+            Share.legacyCopy(url, done);
+        }
+    },
+
+    legacyCopy: function (url, done) {
+        var ta = document.createElement('textarea');
+        ta.value = url;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+
+        var ok = false;
+        try {
+            ok = document.execCommand('copy');
+        } catch (e) {
+            ok = false;
+        }
+        document.body.removeChild(ta);
+
+        if (ok) {
+            done();
+        } else {
+            VOID.alert('复制失败，请手动复制：<br>' + url, 5000);
+        }
+    },
+
+    // 生成二维码并弹层展示（复用主题已有的 fancybox）
+    showQR: function (item) {
+        var holder = document.getElementById('share-qrcode-img');
+        if (!holder) {
+            return;
+        }
+        if (typeof qrcode === 'undefined') {
+            VOID.alert('二维码组件未加载');
+            return;
+        }
+
+        var content = Share.parseItem(item);
+        var url = content.url || window.location.href;
+
+        holder.innerHTML = '';
+        // typeNumber 0 表示按内容自动选择版本，M 为中等纠错级别
+        var qr = qrcode(0, 'M');
+        qr.addData(url);
+        qr.make();
+        holder.innerHTML = qr.createSvgTag(6, 4);
+
+        if (window.jQuery && $.fancybox) {
+            $.fancybox.open({ src: '#share-qrcode', type: 'inline' });
+        }
+    },
+
+    // 按能力显隐「系统分享」按钮（首次加载与 PJAX 后都要执行）
+    init: function () {
+        if (navigator.share) {
+            $('.social-button-icon.native-share').removeClass('native-share-hidden');
+        } else {
+            $('.social-button-icon.native-share').addClass('native-share-hidden');
+        }
     }
 };
 

@@ -633,6 +633,7 @@ article {
         border: none !important;
         font-size: 1.5rem;
         display: inline-flex;
+        align-items: center;
         vertical-align: bottom;
         i {
             color: $fadeColor;
@@ -643,6 +644,54 @@ article {
                 color: #ff5268
             }
         }
+        /* 图标字体里没有的按钮（QQ空间 / 二维码 / 系统分享）使用内联 SVG */
+        svg {
+            display: block;
+            width: 1.5rem;
+            height: 1.5rem;
+            fill: $fadeColor;
+            .theme-dark & {
+                fill: $td-textColor-dark;
+            }
+            &:hover {
+                fill: #ff5268;
+            }
+        }
+        /* 浏览器不支持系统分享时隐藏该按钮 */
+        &.native-share-hidden {
+            display: none;
+        }
+    }
+}
+
+/* 分享二维码弹层（fancybox inline 内容） */
+.share-qrcode-wrap {
+    padding: 1.5rem 1.5rem 1rem;
+    text-align: center;
+    background: $bgColor;
+    .theme-dark & {
+        background: $td-bgColor;
+    }
+}
+/* 独立成顶级规则：fancybox 克隆内容时无论是否保留外层容器，样式都生效 */
+.share-qrcode-img {
+    line-height: 0;
+    svg {
+        display: inline-block;
+        width: 200px;
+        height: 200px;
+        fill: $textColor;
+        .theme-dark & {
+            fill: $td-textColor;
+        }
+    }
+}
+.share-qrcode-tip {
+    margin: 0.75rem 0 0;
+    font-size: 0.9rem;
+    color: $fadeColor;
+    .theme-dark & {
+        color: $td-textColor-dark;
     }
 }
 #social {
