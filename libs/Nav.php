@@ -19,9 +19,16 @@
  *   class        附加 CSS 类名
  *   target       链接 target，默认 _self
  *   mobileTitle  仅下拉项可用：竖屏下该栏的标题，留空则用 title
- *   items        子项数组；存在即渲染为下拉菜单
+ *   columns      下拉分栏：二维数组，外层每一项是一栏，内层是该栏的菜单项
+ *   items        下拉不分栏时的平铺写法（等效于只有一栏）
  *   loginOnly    仅登录用户可见
  *   guestOnly    仅游客可见
+ *
+ * columns 示例（两栏，第一栏 1 项、第二栏 2 项）：
+ *   "columns": [
+ *     [ {"title": "归档页", "url": "/227.html"} ],
+ *     [ {"title": "全站指南", "url": "/a/"}, {"title": "本站指南", "url": "/b/"} ]
+ *   ]
  *
  * @package Typecho-Theme-VOID
  */
@@ -32,6 +39,9 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 
 class Nav
 {
+    /** 显式分栏时允许的最大栏数（与 _header.scss 中生成的 cols-N 对应） */
+    const MAX_COLUMNS = 6;
+
     /**
      * 解析配置
      *
@@ -99,18 +109,29 @@ class Nav
                 continue;
             }
 
-            if (self::isDropdown($item)) {
-                $html .= '<span class="dropdown">' . $title . '<ul>';
-                foreach ($item['items'] as $sub) {
-                    if (!self::visible($sub, $loggedIn)) {
-                        continue;
-                    }
-                    $html .= self::link($sub);
-                }
-                $html .= '</ul></span>';
-            } else {
+            if (!self::isDropdown($item)) {
                 $html .= self::link($item);
+                continue;
             }
+
+            $columns = self::columns($item, $loggedIn);
+            if (empty($columns)) {
+                continue;
+            }
+
+            $count = max(1, min(count($columns), self::MAX_COLUMNS));
+
+            $html .= '<span class="dropdown">' . $title
+                . '<ul class="nav-columns cols-' . $count . '">';
+
+            foreach ($columns as $index => $links) {
+                foreach ($links as $pos => $sub) {
+                    $class = ($index > 0 && $pos === 0) ? ' class="nav-column-break"' : '';
+                    $html .= '<li' . $class . '>' . self::link($sub, false) . '</li>';
+                }
+            }
+
+            $html .= '</ul></span>';
         }
 
         return $html;
@@ -119,7 +140,8 @@ class Nav
     /**
      * 竖屏端渲染
      *
-     * 单独项合并为一栏（栏目标题取 mobileTitle），每个下拉项各占一栏。
+     * 单独项合并为一栏（栏目标题取 mobileTitle），每个下拉项各占一栏；
+     * 下拉内部的显式分栏在竖屏下按顺序平铺。
      *
      * @param array $cfg Nav::parse() 的结果
      * @param bool $loggedIn 当前是否登录
@@ -156,18 +178,17 @@ class Nav
             $html .= '</nav></section>';
         }
 
-        // 下拉项：各占一栏
+        // 下拉项：各占一栏，内部各分栏顺序平铺
         foreach ($drops as $item) {
             $mobileTitle = isset($item['mobileTitle']) && trim((string) $item['mobileTitle']) !== ''
                 ? trim((string) $item['mobileTitle'])
                 : self::title($item);
 
             $html .= '<section data-title="' . self::escape($mobileTitle) . '"><nav>';
-            foreach ($item['items'] as $sub) {
-                if (!self::visible($sub, $loggedIn)) {
-                    continue;
+            foreach (self::columns($item, $loggedIn) as $links) {
+                foreach ($links as $sub) {
+                    $html .= self::link($sub);
                 }
-                $html .= self::link($sub);
             }
             $html .= '</nav></section>';
         }
@@ -176,11 +197,56 @@ class Nav
     }
 
     /**
+     * 取下拉的二维分栏结构
+     *
+     * 返回 [[item, ...], [item, ...]]，已剔除不可见项与空栏。
+     * 优先使用 columns（显式分栏），否则把 items 当作单栏。
+     *
+     * @param array $item 菜单项
+     * @param bool $loggedIn
+     * @return array
+     */
+    private static function columns($item, $loggedIn)
+    {
+        $raw = array();
+
+        if (isset($item['columns']) && is_array($item['columns'])) {
+            foreach ($item['columns'] as $column) {
+                if (is_array($column)) {
+                    $raw[] = $column;
+                }
+            }
+        } elseif (isset($item['items']) && is_array($item['items'])) {
+            $raw[] = $item['items'];
+        }
+
+        $result = array();
+        foreach ($raw as $column) {
+            $links = array();
+            foreach ($column as $sub) {
+                if (self::visible($sub, $loggedIn) && self::title($sub) !== '') {
+                    $links[] = $sub;
+                }
+            }
+            if (!empty($links)) {
+                $result[] = $links;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * 是否下拉菜单
      */
     private static function isDropdown($item)
     {
-        return is_array($item) && !empty($item['items']) && is_array($item['items']);
+        if (!is_array($item)) {
+            return false;
+        }
+
+        return (!empty($item['columns']) && is_array($item['columns']))
+            || (!empty($item['items']) && is_array($item['items']));
     }
 
     /**
@@ -211,8 +277,12 @@ class Nav
 
     /**
      * 渲染单个链接
+     *
+     * @param array $item
+     * @param bool $allowEmptyUrl 无 url 时是否渲染为不带 href 的锚点
+     * @return string
      */
-    private static function link($item)
+    private static function link($item, $allowEmptyUrl = true)
     {
         $title = self::title($item);
         $class = isset($item['class']) && trim((string) $item['class']) !== ''

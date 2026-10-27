@@ -153,6 +153,21 @@ header{
                         @media screen and (max-width: 1024.5px) {
                             column-count: 2;
                         }
+
+                        /*
+                         * 自定义菜单的显式分栏：栏数由 Nav 按 JSON 中的 columns 输出。
+                         * 放在媒体查询之后，窄屏下也保持用户指定的栏数。
+                         */
+                        @for $i from 1 through 6 {
+                            &.cols-#{$i}{
+                                column-count: $i;
+                            }
+                        }
+
+                        /* 每一栏的首项强制换栏，实现「每栏内容由 JSON 指定」 */
+                        li.nav-column-break{
+                            break-before: column;
+                        }
                     }
                 }
                 &:hover ul {
