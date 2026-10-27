@@ -16,6 +16,7 @@ error_reporting(0);
 
 require_once('libs/Utils.php');
 require_once('libs/Authors.php');
+require_once('libs/Nav.php');
 require_once('libs/Contents.php');
 require_once('libs/Comments.php');
 
@@ -60,6 +61,11 @@ function themeConfig($form)
     echo '<p id="void-check-update" class="notice">正在检查更新……</p>';
     echo '<script>var VOIDVersion='.$GLOBALS['VOIDVersion'].'</script>';
     echo '<script src="'.Helper::options()->themeUrl.'/assets/check_update.js"></script>';
+
+    $navBefore = new Typecho_Widget_Helper_Form_Element_Textarea('navBefore', null, '', '导航栏前置自定义菜单', 'JSON 格式。数组元素为菜单项，含 items 的渲染为下拉菜单，否则为单独链接。<br>示例：<code>[{"title":"看看运势","class":"tarot-trigger"},{"title":"关于本站","mobileTitle":"ABOUT","items":[{"title":"归档页","url":"https://example.com/1.html","target":"_blank"}]}]</code><br>可用字段：title（必填）、url（省略则为无 href 的触发器）、class、target（默认 _self）、mobileTitle（竖屏下该下拉的栏目标题，留空用 title）、items（子项）、loginOnly / guestOnly（仅登录 / 仅游客可见）。<br>也可写成 <code>{"mobileTitle":"MORE","items":[...]}</code>，其中 mobileTitle 是竖屏下「单独项」集合的栏目标题。');
+    $form->addInput($navBefore);
+    $navAfter = new Typecho_Widget_Helper_Form_Element_Textarea('navAfter', null, '', '导航栏后置自定义菜单', '用法与「导航栏前置自定义菜单」相同，区别是：桌面端排在现有导航之后，竖屏端排在最后。');
+    $form->addInput($navAfter);
 
     $indexBannerImages = new Typecho_Widget_Helper_Form_Element_Textarea('indexBannerImages', null, '', '顶部大图（随机图池）', '每行填写一个图片链接，每次访问从中随机选取一张显示。留空则不显示顶部大图。');
     $form->addInput($indexBannerImages);

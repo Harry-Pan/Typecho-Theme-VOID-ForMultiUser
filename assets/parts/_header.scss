@@ -314,7 +314,8 @@ body:not(.theme-dark) header {
         }    
     }
     section{
-        &#pages{
+        /* 首栏（可能是前置自定义菜单，也可能是 pages）需要让开顶部的切换按钮 */
+        &:first-child{
             margin-top: calc(60px + 1rem);
         }
         display: block;

@@ -54,8 +54,7 @@ if($this->is('post') || $this->is('page')) {
                     <span></span>
                 </a>
                 <a class="brand" href="<?php Utils::index(''); ?>"><?php if($setting['name']) echo $setting['name']; else echo $this->options->title; ?></a>
-                <a class="tarot-trigger">看看运势</a>
-                <a href="<?php Utils::index(''); ?>goodluck">随缘看看</a>
+                <?php echo Nav::desktop(Nav::parse($setting['navBefore']), $this->user->hasLogin()); ?>
                 <a href="<?php Utils::index(''); ?>">首页</a>
                 <?php $this->widget('Widget_Contents_Page_List')->parse('<a href="{permalink}">{title}</a>'); ?>
                 <span class="dropdown">分类
@@ -70,16 +69,6 @@ if($this->is('post') || $this->is('page')) {
                         <?php endforeach; ?>
                     </ul>
                 </span>
-                <span class="dropdown">关于本站
-                    <ul>
-                        <li><a target="_blank" href="https://www.harrypan.cn/227.html">归档页</a></li>
-                        <?php if($this->user->hasLogin()): ?>
-                        <li><a target="_blank" href="https://www.harrypan.cn/archives/234/">全站食用指南</a></li>
-                        <?php else: ?>
-                        <li><a target="_blank" href="https://www.harrypan.cn/archives/260/">本站食用指南</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </span>
                 <?php if($setting['nav']){ foreach ($setting['nav'] as $listItem): ?>
                 <span class="dropdown"><?php echo $listItem['name']; ?>
                     <ul>
@@ -91,6 +80,7 @@ if($this->is('post') || $this->is('page')) {
                     </ul>
                 </span>
                 <?php endforeach; } ?>
+                <?php echo Nav::desktop(Nav::parse($setting['navAfter']), $this->user->hasLogin()); ?>
                 <?php if(!Utils::isPluginAvailable('ExSearch')): ?>
                     <span class="hidden-xs search-form-desktop">
                         <label for="search">搜索</label>
@@ -113,12 +103,11 @@ if($this->is('post') || $this->is('page')) {
         </div>
     </header>
     <div id="nav-mobile">
+        <?php echo Nav::mobile(Nav::parse($setting['navBefore']), $this->user->hasLogin()); ?>
         <section id="pages" data-title="PAGES">
             <nav>
                 <a href="<?php Utils::index(''); ?>">首页</a>
                 <?php $this->widget('Widget_Contents_Page_List')->parse('<a href="{permalink}">{title}</a>'); ?>
-                <a class="tarot-trigger">看看运势</a>
-                <a href="<?php Utils::index(''); ?>goodluck">随缘看看</a>
             </nav>
         </section>
         <section id="categories" data-title="CATEGORIES">
@@ -133,16 +122,6 @@ if($this->is('post') || $this->is('page')) {
                 <?php endforeach; ?>
             </nav>
         </section>
-        <section id="about" data-title="ABOUT">
-            <nav>
-                <a target="_blank" href="https://www.harrypan.cn/227.html">归档页</a>
-                <?php if($this->user->hasLogin()): ?>
-                <a target="_blank" href="https://www.harrypan.cn/archives/234/">全站食用指南</a>
-                <?php else: ?>
-                <a target="_blank" href="https://www.harrypan.cn/archives/260/">本站食用指南</a>
-                <?php endif; ?>
-            </nav>
-        </section>
         <?php if($setting['nav']){ foreach ($setting['nav'] as $listItem): ?>
         <section data-title="<?php echo $listItem['name']; ?>">
             <nav>
@@ -154,4 +133,5 @@ if($this->is('post') || $this->is('page')) {
             </nav>
         </section>
         <?php endforeach;} ?>
+        <?php echo Nav::mobile(Nav::parse($setting['navAfter']), $this->user->hasLogin()); ?>
     </div>
