@@ -111,7 +111,14 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
     }
 
     .void-cfg-group .description a.btn {
+        display: inline-block;
+        height: 32px;
+        line-height: 32px;
+        padding: 0 14px;
         margin-top: 8px;
+        font-size: 14px;
+        text-align: center;
+        vertical-align: middle;
     }
 
     form.void-cfg > ul.typecho-option.void-cfg-submit {
