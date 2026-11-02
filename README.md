@@ -1,4 +1,4 @@
-# Typecho Theme VOID for MultiUser 3.5.2
+# Typecho Theme VOID for MultiUser
 
 > ✏ 一款可能没那么简洁的 Typecho 主题。拿去和朋友们搞点文学结社也许不错。
 
@@ -12,9 +12,10 @@
 
 ## 特性
 
-> 介绍文章：[VOID：现在可以公开的情报](https://blog.imalan.cn/archives/247/)。
+> 介绍文章：[VOID-ForMultiUser发布](https://www.harrypan.cn/archives/1742/)。
 
 * 响应式设计
+* 全新无刷新引擎：Swup，在主题层面兼容PJAX
 * PJAX 无刷新体验
 * AJAX 评论
 * 前台无跳转登陆（兼容 PJAX）
@@ -26,91 +27,66 @@
 * 代码行号
 * 站点样式设置面板（日夜转换、字体、字号）
 * MathJax 公式
-* 表情解析（文章、评论可用）
 * 图片排版（可用作相册）
 * 图片懒加载
 * 灵活的头图设置
 * 文章目录解析
 * 完整的结构化数据支持
 * 站内即时搜索（浏览器端检索标题、正文、分类、标签）
+* 多作者适配
 * 够用的后台设置与丰富的高级设置
 
-结合附带的配套专用插件，还有更多功能：
+结合附带的配套专用插件，还有更多拓展功能：
 
 * 浏览量统计
 * 文章点赞
 * 文章字数统计
 * 评论投票与自动折叠
 * 访客互动展示
+* 图片显示优化
 
-以及其他很多细节，总之用起来还算舒服。我建立了一个示例页面，在这里你可以看到 VOID 对常用写作元素的支持以及一些特色功能演示：[示例页面](https://blog.imalan.cn/archives/194/)。
+以及其他很多细节，总之用起来还算舒服。你可以参考这个博客，在这里你可以看到 VOID最新版的运行演示：[示例页面](https://www.harrypan.cn/)。
 
 ## 开始使用
 
-1. 下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases)，注意是下载 VOID-x.x.x.zip 这个压缩包，而不是 Source code
-2. 解压
-3. 将**主题文件夹下**的 VOID 文件夹上传至站点 /usr/themes 目录下
-4. 后台启用主题
-5. 将**配套插件文件夹下**的 VOID 文件夹上传至站点 /usr/plugins 目录下
-6. 后台启用插件
+​	使用前，请确保你的博客使用 PHP 7.0 及以上版本搭配 MySQL 数据库。更低版本的PHP以及其它数据库可能出现未知问题（并且我不会去修复）。
+
+1. 下载主题：[发布版](https://github.com/Harry-Pan/Typecho-Theme-VOID-ForMultiUser/releases)，注意是下载 VOID-FMU-x.x.x.zip 这个压缩包，而不是 Source code
+2. 下载插件：[VOID-FMU-Plugin](https://github.com/Harry-Pan/VOID-ForMultiUser-Plugin)
+3. 解压
+4. 将**主题文件夹下**的 VOID-FMU 文件夹上传至站点 /usr/themes 目录下
+5. 后台启用主题
+6. 将**配套插件文件夹下**的 VOID-FMU 文件夹上传至站点 /usr/plugins 目录下
+7. 后台启用插件
 
 * 可选：将主题 `assets` 文件夹下的 `VOIDCacheRule.js` 复制一份到站点根目录，并在主题设置中启用 Service Worker 缓存。
 * 可选：主题文件夹下 advanceSetting.sample.json 中有一些高级设置，可以看看。
 
-## 站内搜索
-
-主题内置的即时搜索在浏览器端完成匹配，输入时即出结果，支持上下键选择、回车跳转，结果除文章和独立页面外还包含分类与标签。索引在后台「即时搜索」中开启，索引缓存可选两种模式：
-
-* **摘要缓存**：只收录正文前 600 字，索引体积小、加载快，但正文靠后的内容搜不到。
-* **全量缓存**：收录全文，能搜到几乎所有可搜索内容，但索引更大，首次打开搜索框的加载时间更长。
-
-两种索引各自独立保存，切换模式后自动重建，互不覆盖；文章更新后索引会自动重建，也可在设置里一键重建。
-
-它与 Typecho 内置搜索的区别：
-
-| | 即时搜索 | Typecho 内置搜索 |
-| --- | --- | --- |
-| 检索位置 | 浏览器端 | 服务端 |
-| 反馈方式 | 输入即出结果 | 跳转到搜索页 |
-| 检索范围 | 标题、正文、分类、标签 | 标题、正文 |
-| 正文范围 | 摘要缓存为前 600 字，全量缓存为全文 | 始终全文 |
-| 结果跳转 | 可直接进入文章、分类、标签 | 仅文章与独立页面 |
-
-搜索框右侧的「搜索」按钮即调用 Typecho 内置搜索，可用来查看全文范围的完整结果。
-
 ## **常见问题（请务必仔细阅读）**
 
-<details><summary>如何开启文章点赞？</summary><br>
+<details><summary>如何开启文章点赞/文章浏览量统计/文章字数统计/点赞功能？</summary><br>
 
-文章点赞功能依赖配套插件，请上传至插件目录并启用。插件一般会随主题包发布，开发版主题请前往 https://github.com/AlanDecode/VOID-Plugin 获取。
 
-</details>
-
-<details><summary>如何开启文章浏览量统计？</summary><br>
-
-文章浏览量统计功能依赖配套插件，请上传至插件目录并启用。插件一般会随主题包发布，开发版主题请前往 https://github.com/AlanDecode/VOID-Plugin 获取。
-
-</details>
-
-<details><summary>如何开启文章字数统计？</summary><br>
-
-文章字数统计功能依赖配套插件，请上传至插件目录并启用。插件一般会随主题包发布，开发版主题请前往 https://github.com/AlanDecode/VOID-Plugin 获取。
+这些功能依赖配套插件，请上传至插件目录并启用。插件一般会随主题包发布。
 
 </details>
 
 <details><summary>下载安装后样式不对？</summary><br>
 
-仓库中的是未压缩的源代码，包含大量实际使用中不需要的文件，并且可能无法直接使用。请一定通过这两个链接下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases) | [开发版](https://github.com/AlanDecode/Typecho-Theme-VOID/archive/nightly.zip)。注意其中发布版是下载 VOID-x.x.x.zip 这个压缩包，而不是 Source code。
+
+仓库中的是未压缩的源代码，包含大量实际使用中不需要的文件，并且可能无法直接使用。请一定通过这个链接下载主题：[发布版](https://github.com/Harry-Pan/Typecho-Theme-VOID-ForMultiUser/releases)。注意其中发布版是下载 VOID-FMU-x.x.x.zip 这个压缩包，而不是 Source code。
 
 </details>
 
 <details><summary>添加归档页面</summary><br>
+
 
 新建独立页面，自定义模板选择 `Archives`，内容留空。
 
 </details>
 
 <details><summary>添加友情链接</summary><br>
+
 
 新建独立页面，然后如此书写：
 
@@ -136,6 +112,7 @@
 </details>
 
 <details><summary>图片排版</summary><br>
+
 
 在文章中，使用 `[photos][/photos]` 包起来的图片可显示在同一行。例如：
 
@@ -168,15 +145,9 @@
 
 <details><summary>增强的 Markdown 语法</summary><br>
 
-* 注音语法：`{{文本:zhu yin}}`，会渲染为：<ruby>文本<rp> (</rp><rt>zhu yin</rt><rp>)</rp></ruby>
+
+* 注音语法：`{{文本:zhu yin}}`，会渲染为：文本 (zhu yin)<ruby>文本<rp> (</rp><rt>zhu yin</rt><rp>)</rp></ruby>
 * notice 提示块：`[notice]提示内容[/notice]`
-
-</details>
-
-<details><summary>页面空白</summary><br>
-
-* 首先检查是否有插件重复引入了 JQuery，若有，在插件设置页面关闭。
-* 另外，推荐使用 PHP 7.0 及以上版本搭配 MySQL 数据库。PHP 5.6 或者更低版本以及其它数据库可能出现未知问题（并且我不会去修复）。
 
 </details>
 
@@ -192,10 +163,11 @@
 
 <details><summary>展开详情</summary><br>
 
+
 如果你有不错的想法，可以定制自己的版本。首先你需要准备好 NodeJS 环境，然后 clone 这个 repo：
 
 ```bash
-git clone https://github.com/AlanDecode/Typecho-Theme-VOID ./VOID && cd ./VOID
+git clone https://github.com/Harry-Pan/VOID-ForMultiUser-Plugin ./VOID-FMU && cd ./VOID
 ```
 
 安装依赖：
@@ -228,6 +200,14 @@ gulp build
 </details>
 
 ## 更新日志
+
+**🍰 2026-10-27 Version 3.5.3**
+
+* 新增：引入PJAX的现代化替代品：Swup，启用时依赖PJAX的功能和插件会通过主题适配转接给Swup。目前PJAX暂未移除，可以在**设置外观**处进行配置。目前并未发现Swup导致的兼容性问题，如果你在使用中遇到此类问题，请提交issue。
+* 新增：ExSearch整合进主题，可以自行选择开关和缓存策略。
+* 新增：代码块复制功能。
+* 优化：jQuery兼容保护：当有外部插件覆盖jQuery时，会自动指回主题实例，并在控制台进行提示。
+* 优化：优化了**设置外观**的样式。
 
 **🍰 2026-10-27 Version 3.5.2**
 
