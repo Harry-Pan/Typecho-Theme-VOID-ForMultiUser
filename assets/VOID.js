@@ -8,6 +8,75 @@
 
 console.log(' %c Theme VOID %c https://blog.imalan.cn/archives/247/ ', 'color: #fadfa3; background: #23b7e5; padding:5px;', 'background: #1c2b36; padding:5px;');
 
+/**
+ * jQuery 兼容保护
+ *
+ * 有些插件会在主题之后再次加载一份自己的 jQuery（例如 ExSearch 的
+ * 「引入 JQuery」选项），把 window.jQuery / window.$ 整个替换掉。
+ * jQuery 插件是挂在具体实例上的，替换后 masonry / pjax / fancybox
+ * 在本页面上全部消失，首页卡片会停留在 opacity: 0 的初始态，
+ * 看起来就像「白屏」。
+ *
+ * 这里在主题插件都注册完之后留一份引用；运行时若发现全局 jQuery 被
+ * 换掉，就把全局指回主题实例（masonry / pjax / fancybox 等插件都挂在
+ * 它上面），并在控制台留一条提示。补不回来时再降级处理。
+ */
+var VOID_JQ = {
+    cache: null,
+    restored: false,
+
+    // 记录主题所用 jQuery 实例（本文件在 bundle.js 之后加载，
+    // 此时 masonry / pjax / fancybox / hyphenate 等插件都已注册）
+    snapshot: function () {
+        var jq = window.jQuery;
+        if (!jq || !jq.fn) {
+            return;
+        }
+        VOID_JQ.cache = {
+            version: jq.fn.jquery,
+            jq: jq
+        };
+    },
+
+    // 若全局 jQuery 被其他插件替换，恢复为主题所用实例
+    ensure: function () {
+        var jq = window.jQuery;
+        if (!jq || !jq.fn) {
+            return false;
+        }
+        var mine = VOID_JQ.cache && VOID_JQ.cache.jq;
+        if (mine && mine !== jq) {
+            window.jQuery = mine;
+            window.$ = mine;
+            if (!VOID_JQ.restored) {
+                VOID_JQ.restored = true;
+                VOID_JQ.warn('检测到全局 jQuery 被其他插件覆盖（' + jq.fn.jquery + '），已恢复为主题使用的 ' + mine.fn.jquery + '。');
+            }
+        }
+        return true;
+    },
+
+    // 当前全局 jQuery 是否具备某个插件
+    has: function (name) {
+        var jq = window.jQuery;
+        if (!jq) {
+            return false;
+        }
+        if (name === 'fancybox') {
+            return !!(jq.fancybox && typeof jq.fancybox.open === 'function');
+        }
+        return !!(jq.fn && typeof jq.fn[name] === 'function');
+    },
+
+    warn: function (message) {
+        if (window.console && console.warn) {
+            console.warn('[VOID] ' + message);
+        }
+    }
+};
+
+VOID_JQ.snapshot();
+
 var VOID_Content = {
     countWords: function () {
         if ($('#totalWordCount').length) {
@@ -100,6 +169,11 @@ var VOID_Content = {
         });
 
         if (VOIDConfig.PJAX) {
+            VOID_JQ.ensure();
+            if (!VOID_JQ.has('pjax')) {
+                VOID_JQ.warn('PJAX 不可用（jQuery 插件被其他插件覆盖且无法恢复），已退化为普通跳转。');
+                return;
+            }
             $.each($('a:not(a[target="_blank"], a[no-pjax])'), function (i, item) {
                 if (item.hostname == domain) {
                     $(item).addClass('pjax');
@@ -181,6 +255,9 @@ var VOID_Content = {
 var VOID = {
     // 初始化单页应用
     init: function () {
+        /* 若 jQuery 被其他插件替换，先恢复主题实例 */
+        VOID_JQ.ensure();
+
         /* 初始化 UI */
         VOID_Ui.checkHeader();
         VOID_Ui.MasonryCtrler.init();
@@ -231,6 +308,7 @@ var VOID = {
 
     // PJAX 结束后
     afterPjax: function () {
+        VOID_JQ.ensure();
         NProgress.done();
 
         VOID_Content.parseBoardThumbs();
@@ -298,7 +376,7 @@ var VOID = {
             return;
         }
         var t = VOIDConfig.searchBase + c;
-        if (VOIDConfig.PJAX) {
+        if (VOIDConfig.PJAX && VOID_JQ.has('pjax')) {
             $.pjax({
                 url: t,
                 container: '#pjax-container',

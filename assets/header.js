@@ -428,6 +428,9 @@ VOID_Ui = {
 
     MasonryCtrler: {
         masonry: function () {
+            if (typeof $.fn.masonry !== 'function') {
+                return;
+            }
             $('#masonry').addClass('masonry').masonry({
                 itemSelector: '.masonry-item',
                 gutter: 30,
@@ -436,9 +439,19 @@ VOID_Ui = {
             });
         },
         init: function () {
+            // jQuery 可能被其他插件替换，先恢复主题使用的实例
+            if (window.VOID_JQ) {
+                window.VOID_JQ.ensure();
+            }
+            var canMasonry = typeof $.fn.masonry === 'function';
             if (VOID_Ui.MasonryCtrler.check() && VOIDConfig.indexStyle == 0) {
-                $('.masonry-item').addClass('masonry-ready');
-                VOID_Ui.MasonryCtrler.masonry();
+                if (canMasonry) {
+                    $('.masonry-item').addClass('masonry-ready');
+                    VOID_Ui.MasonryCtrler.masonry();
+                } else if (window.VOID_JQ) {
+                    // 降级：不加 masonry-ready，卡片按普通单列排布，至少保证可见
+                    window.VOID_JQ.warn('masonry 不可用（jQuery 插件被其他插件覆盖且无法恢复），首页卡片已退化为单列排列。');
+                }
             }
             $('.masonry-item').addClass('done');
         },
