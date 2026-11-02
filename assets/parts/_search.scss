@@ -113,36 +113,11 @@ $search-accent: var(--index-hover-color, #bd6262);
 
     .void-search-goto{
         flex: none;
-        margin-left: 0.4rem;
-        padding: 0 0.75rem;
+        margin: 0 0.55rem 0 0.6rem;
+        padding: 0.25rem 0.85rem;
         font-size: 0.82rem;
-        line-height: 1.9;
-        border-radius: 2rem;
-        color: #fff;
-        background: $search-accent;
-        opacity: 0.9;
-        transition: opacity $animationTime $animationTimingFunc;
-
-        &:hover{
-            opacity: 1;
-        }
-    }
-
-    .void-search-close{
-        flex: none;
-        padding: 0.35rem 0.5rem;
-        font-size: 1.35rem;
-        line-height: 1;
-        color: $fadeColor;
-        transition: color $animationTime $animationTimingFunc;
-
-        .theme-dark &{
-            color: rgba(255, 255, 255, 0.42);
-        }
-
-        &:hover{
-            color: $search-accent;
-        }
+        line-height: 1.5;
+        border-radius: 4px;
     }
 }
 

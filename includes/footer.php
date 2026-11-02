@@ -150,12 +150,9 @@ $setting = $GLOBALS['VOIDSetting'];
                     <i class="voidicon-search"></i>
                     <input type="text" id="void-search-input" autocomplete="off" autocorrect="off"
                         autocapitalize="off" spellcheck="false" placeholder="搜索文章、页面、分类或标签" />
-                    <a class="void-search-goto" role="button" title="在搜索结果页中查看"
+                    <a class="btn void-search-goto" role="button" title="在搜索结果页中查看"
                         href="javascript:void(0);"
                         onclick="VOID_Search.gotoSearchPage(); return false;">搜索</a>
-                    <a class="void-search-close" role="button" aria-label="关闭搜索"
-                        href="javascript:void(0);"
-                        onclick="VOID_Search.close(); return false;">×</a>
                 </div>
                 <div class="void-search-results" id="void-search-results"></div>
             </div>
