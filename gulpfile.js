@@ -52,7 +52,7 @@ gulp.task('pack:js:dep', function () {
         .pipe(rev.manifest())
         .pipe(gulp.dest('temp/rev/js_bundle-header'));
 
-    return gulp.src(['./assets/libs/**/*.js', '!./assets/libs/header/**/*', '!./assets/libs/mathjax/**/*'])
+    return gulp.src(['./assets/libs/**/*.js', '!./assets/libs/header/**/*', '!./assets/libs/mathjax/**/*', '!./assets/libs/swup/**/*'])
         .pipe(concat('bundle.js'))
         .pipe(uglify())
         .pipe(rev())
@@ -111,7 +111,7 @@ gulp.task('dev', function () {
         .pipe(concat('bundle-header.js'))
         .pipe(gulp.dest('./assets/'));
 
-    return gulp.src(['./assets/libs/**/*.js', '!./assets/libs/header/**/*', '!./assets/libs/mathjax/**/*'])
+    return gulp.src(['./assets/libs/**/*.js', '!./assets/libs/header/**/*', '!./assets/libs/mathjax/**/*', '!./assets/libs/swup/**/*'])
         .pipe(concat('bundle.js'))
         .pipe(gulp.dest('./assets/'));
 });

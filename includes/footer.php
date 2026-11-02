@@ -162,7 +162,7 @@ $setting = $GLOBALS['VOIDSetting'];
         <?php if($setting['enableMath']): ?>
         <script src='<?php Utils::indexTheme('/assets/libs/mathjax/2.7.9/MathJax.js'); ?>'></script>
         <?php endif; ?>
-        <?php if($setting['pjax']): ?>
+        <?php if($setting['pjax'] === 'swup'): ?>
         <script src="<?php Utils::asset('/assets/libs/swup/swup.umd.js'); ?>"></script>
         <?php endif; ?>
         <script src="<?php Utils::asset('/assets/VOID.js'); ?>"></script>
@@ -172,7 +172,7 @@ $setting = $GLOBALS['VOIDSetting'];
          * 主题不再内置表情组件，此处保留占位说明，避免与插件重复初始化。
          */
         ?>
-        <?php if($setting['pjax']): ?>
+        <?php if($setting['pjax'] !== 'off'): ?>
         <script>
         // 用户自定义的「切换后执行的 JS」，由 VOID.afterPjax() 统一调用
         window.VOID_PJAX_RELOAD = function () {

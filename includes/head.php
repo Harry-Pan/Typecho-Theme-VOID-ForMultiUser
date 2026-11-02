@@ -64,7 +64,8 @@ if (isset($_POST['void_action'])) {
     <script src="<?php Utils::asset('/assets/bundle-header.js'); ?>"></script>
     <script>
     VOIDConfig = {
-        PJAX : <?php echo $setting['pjax'] ? 'true' : 'false'; ?>,
+        PJAX : <?php echo $setting['pjax'] !== 'off' ? 'true' : 'false'; ?>,
+        ajaxMode : "<?php echo $setting['pjax']; ?>",
         searchBase : "<?php Utils::index("/search/"); ?>",
         searchEnabled : <?php echo Search::enabled() ? 'true' : 'false'; ?>,
         searchIndex : "<?php echo Search::urlString(); ?>",

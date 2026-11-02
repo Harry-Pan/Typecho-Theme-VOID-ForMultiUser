@@ -357,7 +357,7 @@ class Utils
             'head' => '',
             'footer' => '',
             'serifincontent' => false,
-            'pjax' => false,
+            'pjax' => 'swup',
             'pjaxreload' => '',
             'indexStyle' => 0,
             'lazyload' => false,
@@ -392,7 +392,14 @@ class Utils
         $themeSetting['enableMath'] = boolval($themeSetting['enableMath']);
         $themeSetting['lazyload'] = boolval($themeSetting['lazyload']);
         $themeSetting['colorScheme'] = intval($themeSetting['colorScheme']);
-        $themeSetting['pjax'] = boolval($themeSetting['pjax']);
+        // 兼容旧数据：'1' 视为 Swup，'0' 视为关闭
+        $pjaxMode = $themeSetting['pjax'];
+        if ($pjaxMode === true || $pjaxMode === '1' || $pjaxMode === 1 || $pjaxMode === 'true') {
+            $pjaxMode = 'swup';
+        } elseif ($pjaxMode === false || $pjaxMode === '0' || $pjaxMode === 0 || $pjaxMode === '') {
+            $pjaxMode = 'off';
+        }
+        $themeSetting['pjax'] = in_array($pjaxMode, array('swup', 'pjax', 'off'), true) ? $pjaxMode : 'off';
         $themeSetting['serifincontent'] = boolval($themeSetting['serifincontent']);
         $themeSetting['indexStyle'] = intval($themeSetting['indexStyle']);
         $themeSetting['outdatedNotice'] = boolval($themeSetting['outdatedNotice']);

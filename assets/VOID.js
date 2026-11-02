@@ -296,13 +296,20 @@ var VOID_Nav = {
         }
         this.attached = true;
 
-        if (!VOIDConfig.PJAX) {
+        var mode = VOIDConfig.ajaxMode || (VOIDConfig.PJAX ? 'swup' : 'off');
+        if (mode !== 'swup' && mode !== 'pjax') {
             return;
         }
 
         var self = this;
 
-        if (window.Swup) {
+        // 选了 Swup 但脚本没加载出来，退到 jQuery.pjax
+        if (mode === 'swup' && !window.Swup) {
+            VOID_JQ.warn('Swup 未能加载，已回退到 jQuery.pjax。');
+            mode = 'pjax';
+        }
+
+        if (mode === 'swup') {
             this.swup = new Swup({
                 containers: ['#pjax-container'],
                 linkSelector: 'a[href]',
@@ -378,6 +385,9 @@ var VOID_Nav = {
                 }
             });
 
+            // 让依赖 PJAX 的插件在 Swup 下也能工作
+            this.installPjaxCompat();
+
             return;
         }
 
@@ -415,6 +425,37 @@ var VOID_Nav = {
         $(document).on('pjax:end', function () {
             VOID.endPjax();
         });
+    },
+
+    /*
+     * 兼容依赖 PJAX 的插件：把它们的 $.pjax(...) 调用转交给 Swup，
+     * 并在生命周期里补发 pjax:* 事件，使监听这些事件的插件照常工作。
+     */
+    installPjaxCompat: function () {
+        var self = this;
+        var jq = window.jQuery;
+
+        if (!jq || !jq.pjax) {
+            return;
+        }
+
+        var original = jq.pjax;
+
+        jq.pjax = function (options) {
+            var url = typeof options === 'string' ? options : (options && options.url);
+            if (url && self.swup) {
+                self.swup.navigate(url);
+                return jq;
+            }
+            return original.apply(jq, arguments);
+        };
+
+        jq.pjax.defaults = original.defaults;
+        jq.pjax.reload = function () {
+            if (self.swup) {
+                self.swup.reload();
+            }
+        };
     },
 
     // 主题主动发起的跳转
@@ -483,6 +524,9 @@ var VOID = {
 
     // PJAX 开始前
     beforePjax: function () {
+        if (VOID_Nav.mode === 'swup') {
+            $(document).trigger('pjax:send');
+        }
         NProgress.start();
         VOID_Ui.reset();
     },
@@ -539,9 +583,17 @@ var VOID = {
                 console.warn('[VOID] pjaxreload 执行出错：' + e.message);
             }
         }
+
+        // 供依赖 PJAX 事件的插件使用
+        if (VOID_Nav.mode === 'swup') {
+            $(document).trigger('pjax:complete');
+        }
     },
 
     endPjax: function () {
+        if (VOID_Nav.mode === 'swup') {
+            $(document).trigger('pjax:end');
+        }
         if ($('.TOC').length < 1) {	
             TOC.close();
         }
