@@ -184,9 +184,9 @@ function themeConfig($form)
     $form->addInput($head);
     $footer = new Typecho_Widget_Helper_Form_Element_Textarea('footer', null, '', 'footer 标签输出内容', '备案号等。');
     $form->addInput($footer);
-    $pjax = new Typecho_Widget_Helper_Form_Element_Radio('pjax', array('swup' => 'Swup', 'pjax' => 'PJAX', 'off' => '关闭'), 'swup', 'swup/PJAX 选项', 'swup：更现代的“PJAX”，适合现代浏览器，不依赖 jQuery。在主题层面实现了对依赖 PJAX 的插件的兼容支持。<br>PJAX：可能会更兼容一些需要 PJAX 的插件。<br>如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭此项。');
+    $pjax = new Typecho_Widget_Helper_Form_Element_Radio('pjax', array('swup' => 'Swup', 'pjax' => 'PJAX', 'off' => '关闭'), 'swup', 'Swup/PJAX 选项', 'Swup：更现代的“PJAX”，适合现代浏览器，不依赖 jQuery。在主题层面实现了对依赖 PJAX 的插件的兼容支持。<br>PJAX：可能会更兼容一些需要 PJAX 的插件。<br>如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭此项。');
     $form->addInput($pjax);
-    $pjaxreload = new Typecho_Widget_Helper_Form_Element_Textarea('pjaxreload', null, null, 'swup/PJAX 重载函数', '输入每次无刷新跳转后要执行的 JS（会包成一个函数调用），如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭上面的选项并留空此项。');
+    $pjaxreload = new Typecho_Widget_Helper_Form_Element_Textarea('pjaxreload', null, null, 'Swup/PJAX 重载函数', '输入每次无刷新跳转后要执行的 JS（会包成一个函数调用），如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭上面的选项并留空此项。');
     $form->addInput($pjaxreload);
     $serviceworker = new Typecho_Widget_Helper_Form_Element_Text('serviceworker', null, null, '自定义 Service Worker', '如果你知道这是什么，请把你的 SW 文件（例如主题 assets 文件夹下的 VOIDCacheRule.js）复制一份到<b>站点根目录</b>，并在这里填写文件名（例如 VOIDCacheRule.js）。若不知道该选项含义，请留空此项。');
     $form->addInput($serviceworker);
