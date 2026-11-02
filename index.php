@@ -6,7 +6,7 @@
  * 
  * @package     VOID-FMU
  * @author      Harry Pan
- * @version     3.5.2
+ * @version     3.5.3
  * @link        https://www.harrypan.cn/archives/1742/
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;

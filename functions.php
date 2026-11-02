@@ -74,7 +74,7 @@ function themeInit()
 }
 
 $GLOBALS['VOIDPluginREQ'] = 1.2;
-$GLOBALS['VOIDVersion'] = 3.52;
+$GLOBALS['VOIDVersion'] = 3.53;
 
 /**
  * 主题设置
