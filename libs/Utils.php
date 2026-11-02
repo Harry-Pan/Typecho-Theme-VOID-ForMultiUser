@@ -4,8 +4,8 @@
  * 
  * 工具类
  * 
- * @author      熊猫小A
- * @version     2019-01-15 0.01
+ * @author      Harry Pan
+ * @version     1.0
  */
 
 class Utils

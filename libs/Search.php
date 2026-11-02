@@ -8,7 +8,8 @@
  * 摘要、分类与标签的索引。索引在文章变化后按需重建，写入 theme/cache，
  * 由前端按需拉取并缓存。
  *
- * @author      熊猫小A
+ * @author      Harry Pan
+ * @version     1.0
  */
 
 class Search

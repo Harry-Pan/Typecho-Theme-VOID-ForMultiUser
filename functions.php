@@ -4,8 +4,8 @@
  *
  * 初始化主题
  *
- * @author      熊猫小A
- * @version     2019-01-15 1.0
+ * @author      Harry Pan
+ * @version     1.0
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) {
     exit;

@@ -4,8 +4,8 @@
  * 
  * <head>
  * 
- * @author      熊猫小A
- * @version     2019-01-15 0.1
+ * @author      Harry Pan
+ * @version     1.0
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 $setting = $GLOBALS['VOIDSetting']; 

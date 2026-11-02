@@ -4,6 +4,9 @@
  *
  * 只在「设置外观」页面输出，用卡片与分组标题把 Typecho 原生表单重新组织一遍。
  * 不改变任何 input 的 name / 顺序语义，提交仍然由 Typecho 核心处理。
+ *
+ * @author      Harry Pan
+ * @version     1.0
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
