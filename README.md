@@ -49,7 +49,7 @@
 
 1. 下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases)，注意是下载 VOID-x.x.x.zip 这个压缩包，而不是 Source code
 2. 解压
-3. 将**主题文件夹下**的 VOID 文件夹上传至站点 /usr/themes 目录下
+3. 将**主题文件夹下**的 VOID-FMU 文件夹上传至站点 /usr/themes 目录下
 4. 后台启用主题
 5. 将**配套插件文件夹下**的 VOID 文件夹上传至站点 /usr/plugins 目录下
 6. 后台启用插件

@@ -2,12 +2,12 @@
 /**
  * VOID：无类型
  * 
- * 作者：<a href="https://www.imalan.cn">熊猫小A</a>
+ * 作者：<a href="https://www.harrypan.cn">Harry Pan</a>
  * 
- * @package     Typecho-Theme-VOID
- * @author      熊猫小A
+ * @package     VOID-FMU
+ * @author      Harry Pan
  * @version     3.5.2
- * @link        https://blog.imalan.cn/archives/247/
+ * @link        https://www.harrypan.cn/archives/1742/
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 $setting = $GLOBALS['VOIDSetting']; 

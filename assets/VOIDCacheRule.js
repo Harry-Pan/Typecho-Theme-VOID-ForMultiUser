@@ -17,7 +17,7 @@
   var maxEntries = 200;
 
 
-  self.importScripts('usr/themes/VOID/assets/sw-toolbox.js');
+  self.importScripts('usr/themes/VOID-FMU/assets/sw-toolbox.js');
 
   self.toolbox.options.debug = false;
 

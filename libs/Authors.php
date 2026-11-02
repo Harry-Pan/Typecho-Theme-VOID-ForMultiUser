@@ -8,7 +8,7 @@
  * 属于对核心的侵入式修改。这里改为主题自带的普通工具类，不依赖任何 Widget，
  * 因此无需改动 Typecho 核心即可使用。
  *
- * @package Typecho-Theme-VOID
+ * @package VOID-FMU
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {

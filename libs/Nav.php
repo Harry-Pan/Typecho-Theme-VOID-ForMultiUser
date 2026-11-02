@@ -30,7 +30,7 @@
  *     [ {"title": "全站指南", "url": "/a/"}, {"title": "本站指南", "url": "/b/"} ]
  *   ]
  *
- * @package Typecho-Theme-VOID
+ * @package VOID-FMU
  */
 
 if (!defined('__TYPECHO_ROOT_DIR__')) {
