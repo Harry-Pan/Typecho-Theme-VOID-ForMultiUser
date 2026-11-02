@@ -14,7 +14,7 @@
 class Search
 {
     /** 索引格式版本，结构变动时递增 */
-    const VERSION = 2;
+    const VERSION = 3;
 
     /** 摘要模式下正文截断长度（字符） */
     const EXCERPT = 600;
@@ -161,6 +161,53 @@ class Search
     }
 
     /**
+     * 把 Markdown 原文转成前台渲染后的纯文本
+     *
+     * 走 Typecho 自带的 Markdown 渲染器，再剥掉标签与少量主题/插件短代码，
+     * 从而只保留页面上真正可见的文字（加粗、链接地址、图片等都不会进入索引）。
+     */
+    public static function clean($text)
+    {
+        $text = (string)$text;
+        $html = null;
+
+        // Typecho 用 <!--markdown--> 前缀标记 Markdown 内容，渲染前需要去掉（与核心一致）
+        if (0 === strpos($text, '<!--markdown-->')) {
+            $text = substr($text, 15);
+        }
+
+        if (class_exists('\\Utils\\Markdown')) {
+            try {
+                $html = \Utils\Markdown::convert($text);
+            } catch (\Exception $e) {
+                $html = null;
+            } catch (\Throwable $e) {
+                $html = null;
+            }
+        }
+
+        if ($html === null) {
+            // 渲染器不可用时退回正则清理
+            $html = $text;
+            $html = preg_replace('/!\[[^\]]*\]\([^)]*\)/u', '', $html);
+            $html = preg_replace('/\[([^\]]*)\]\([^)]*\)/u', '$1', $html);
+            $html = preg_replace('/^[ \t]{0,3}(#{1,6}|>|[-*+]\s|\d+\.\s)/mu', '', $html);
+            $html = preg_replace('/(\*\*|__|~~|`+|\*|_)/u', '', $html);
+        }
+
+        // 注释、more 标记
+        $text = preg_replace('/<!--.*?-->/s', ' ', $html);
+        // 剥标签后解实体
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        // 主题与插件短代码标记
+        $text = preg_replace('/\[\/?(Meting|links|photos|notice|ruby|fancybox|i)([\s-][^\]]*)?\]/i', ' ', $text);
+        $text = preg_replace('/\s+/u', ' ', $text);
+
+        return trim($text);
+    }
+
+    /**
      * 生成索引
      *
      * @return array|false 成功返回 ['count'=>条目数, 'bytes'=>文件大小]
@@ -224,13 +271,7 @@ class Search
                 ->order('table.contents.created', Typecho_Db::SORT_DESC));
 
             foreach ($rows as $row) {
-                $text = (string)$row['text'];
-                $text = strip_tags($text);
-                // 去掉 Markdown 图片与链接的语法，只留可见文字
-                $text = preg_replace('/!\[[^\]]*\]\([^)]*\)/u', '', $text);
-                $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/u', '$1', $text);
-                $text = preg_replace('/\s+/u', ' ', $text);
-                $text = trim($text);
+                $text = self::clean((string)$row['text']);
 
                 $item = array(
                     'title' => (string)$row['title'],
