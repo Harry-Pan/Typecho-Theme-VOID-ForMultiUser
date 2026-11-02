@@ -21,6 +21,13 @@ require_once('libs/Contents.php');
 require_once('libs/Comments.php');
 require_once('libs/Search.php');
 
+// 后台「设置外观」页：给原生表单加卡片与分组标题
+if (defined('__TYPECHO_ADMIN__')
+    && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET'
+    && isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'options-theme.php') !== false) {
+    require_once(__DIR__ . '/includes/admin-config-enhance.php');
+}
+
 // 后台「立即重建索引」：仅在管理后台、且当前用户为管理员时执行
 if (isset($_GET['void_rebuild_index']) && defined('__TYPECHO_ADMIN__')
     && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
