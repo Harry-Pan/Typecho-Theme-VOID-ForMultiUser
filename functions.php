@@ -103,14 +103,14 @@ function themeConfig($form)
     $navAfter = new Typecho_Widget_Helper_Form_Element_Textarea('navAfter', null, '', '导航栏后置自定义菜单', '用法与「导航栏前置自定义菜单」相同，区别是：桌面端排在现有导航之后，竖屏端排在最后。');
     $form->addInput($navAfter);
 
-    $indexBannerImages = new Typecho_Widget_Helper_Form_Element_Textarea('indexBannerImages', null, '', '顶部大图（随机图池）', '每行填写一个图片链接，每次访问从中随机选取一张显示。留空则不显示顶部大图。');
-    $form->addInput($indexBannerImages);
-    $indexBannerBlur = new Typecho_Widget_Helper_Form_Element_Text('indexBannerBlur', null, '3', '顶部大图模糊度', '单位 px，填写 0 表示不模糊。文章页「主图样式」选择模糊效果时沿用各自的设定。');
-    $form->addInput($indexBannerBlur);
     $indexBannerTitle = new Typecho_Widget_Helper_Form_Element_Text('indexBannerTitle', null, '', '首页顶部大标题', '不要太长');
     $form->addInput($indexBannerTitle);
     $indexBannerSubtitle = new Typecho_Widget_Helper_Form_Element_Text('indexBannerSubtitle', null, '', '首页顶部小标题', '');
     $form->addInput($indexBannerSubtitle);
+    $indexBannerImages = new Typecho_Widget_Helper_Form_Element_Textarea('indexBannerImages', null, '', '顶部大图（随机图池）', '每行填写一个图片链接，每次访问从中随机选取一张显示。留空则不显示顶部大图。');
+    $form->addInput($indexBannerImages);
+    $indexBannerBlur = new Typecho_Widget_Helper_Form_Element_Text('indexBannerBlur', null, '3', '顶部大图模糊度', '单位 px，填写 0 表示不模糊。文章页「主图样式」选择模糊效果时沿用各自的设定。');
+    $form->addInput($indexBannerBlur);
     $indexHoverColor = new Typecho_Widget_Helper_Form_Element_Text('indexHoverColor', null, '#bd6262', '首页列表悬停色', '鼠标悬停在首页文章卡片上时的描边与标题颜色，例如 #6a96f2。');
     $form->addInput($indexHoverColor);
 
@@ -144,7 +144,7 @@ function themeConfig($form)
         . '与 Typecho 内置搜索的区别请查阅主题文档。<br>'
         . '两种索引各自独立保存，切换模式后自动重建，互不覆盖。<br>'
         . '当前状态：' . $voidStatusText . '<br>'
-        . '<a class="btn" href="javascript:void(0);" '
+        . '<a class="btn primary" href="javascript:void(0);" '
         . 'onclick="var u=new URL(location.href);u.searchParams.set(\'void_rebuild_index\',\'1\');location.href=u.href;return false;">'
         . '立即重建索引</a>'
         . '<script>try{if(location.search.indexOf(\'void_rebuild_index\')>-1){'
@@ -169,22 +169,24 @@ function themeConfig($form)
         '1' => '单栏'), '0', '首页版式', '选择单栏或者双栏瀑布流');
     $form->addInput($indexStyle);
 
-    // 高级设置
-    $reward = new Typecho_Widget_Helper_Form_Element_Text('reward', null, '', '打赏二维码', '图片链接，只允许一张图片，更多请自行合成。');
-    $form->addInput($reward);
     $serifincontent = new Typecho_Widget_Helper_Form_Element_Radio('serifincontent', array('0' => '不启用', '1' => '启用'), '0', '文章内容使用衬线体', '是否对文章内容启用衬线体（思源宋体）。此服务由 Google Fonts 提供，可能会有加载较慢的情况。');
     $form->addInput($serifincontent);
     $lazyload = new Typecho_Widget_Helper_Form_Element_Radio('lazyload', array('1' => '启用', '0' => '不启用'), '1', '图片懒加载', '是否启用图片懒加载。');
     $form->addInput($lazyload);
     $enableMath = new Typecho_Widget_Helper_Form_Element_Radio('enableMath', array('0' => '不启用', '1' => '启用'), '0', '启用数学公式解析', '是否启用数学公式解析。启用后会多加载 1~2M 的资源。');
     $form->addInput($enableMath);
+
+    $reward = new Typecho_Widget_Helper_Form_Element_Text('reward', null, '', '打赏二维码', '图片链接，只允许一张图片，更多请自行合成。');
+    $form->addInput($reward);
+
+    // 高级设置
     $head = new Typecho_Widget_Helper_Form_Element_Textarea('head', null, '', 'head 标签输出内容', '统计代码等。');
     $form->addInput($head);
     $footer = new Typecho_Widget_Helper_Form_Element_Textarea('footer', null, '', 'footer 标签输出内容', '备案号等。');
     $form->addInput($footer);
     $pjax = new Typecho_Widget_Helper_Form_Element_Radio('pjax', array('swup' => 'Swup', 'pjax' => 'PJAX', 'off' => '关闭'), 'swup', 'swup/PJAX 选项', 'swup：更现代的“PJAX”，适合现代浏览器，不依赖 jQuery。在主题层面实现了对依赖 PJAX 的插件的兼容支持。<br>PJAX：可能会更兼容一些需要 PJAX 的插件。<br>如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭此项。');
     $form->addInput($pjax);
-    $pjaxreload = new Typecho_Widget_Helper_Form_Element_Textarea('pjaxreload', null, null, '无刷新跳转后执行的 JS', '输入每次无刷新跳转后要执行的 JS（会包成一个函数调用），如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭上面的选项并留空此项。');
+    $pjaxreload = new Typecho_Widget_Helper_Form_Element_Textarea('pjaxreload', null, null, 'swup/PJAX 重载函数', '输入每次无刷新跳转后要执行的 JS（会包成一个函数调用），如果你发现站点有点不对劲，又不知道这个选项是啥意思，请关闭上面的选项并留空此项。');
     $form->addInput($pjaxreload);
     $serviceworker = new Typecho_Widget_Helper_Form_Element_Text('serviceworker', null, null, '自定义 Service Worker', '如果你知道这是什么，请把你的 SW 文件（例如主题 assets 文件夹下的 VOIDCacheRule.js）复制一份到<b>站点根目录</b>，并在这里填写文件名（例如 VOIDCacheRule.js）。若不知道该选项含义，请留空此项。');
     $form->addInput($serviceworker);

@@ -110,6 +110,10 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
         margin-bottom: 4px;
     }
 
+    .void-cfg-group .description a.btn {
+        margin-top: 8px;
+    }
+
     form.void-cfg > ul.typecho-option.void-cfg-submit {
         margin-top: 0;
         background: transparent;
@@ -139,11 +143,11 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
             '首页列表悬停色': 'look',
             '主题颜色模式': 'look',
             '首页版式': 'look',
-            '打赏二维码': 'look',
+            '打赏二维码': 'content',
             '即时搜索': 'search',
             '搜索索引缓存': 'search',
             'swup/PJAX 选项': 'ajax',
-            '无刷新跳转后执行的 JS': 'ajax',
+            'swup/PJAX 重载函数': 'ajax',
             '文章过时提醒': 'content',
             '过时提醒阈值（天）': 'content',
             '彩蛋文章提示内容': 'content',
