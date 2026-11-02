@@ -32,14 +32,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
         padding: 0 2px;
     }
 
-    .void-cfg-num {
-        font-size: 11px;
-        font-weight: 600;
-        letter-spacing: .08em;
-        color: #bd6262;
-        font-variant-numeric: tabular-nums;
-    }
-
     .void-cfg-title {
         margin: 0;
         font-size: 15px;
@@ -48,18 +40,10 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
         line-height: 1.3;
     }
 
-    .void-cfg-sub {
-        flex: 1 1 100%;
-        margin: 2px 0 0;
-        font-size: 12px;
-        color: #9a9a9a;
-        line-height: 1.6;
-    }
-
     .void-cfg-group > ul.typecho-option {
         background: #fff;
         border: 1px solid #e9e9e9;
-        border-radius: 8px;
+        border-radius: 0;
         padding: 15px 18px;
         margin: 0 0 10px;
         box-shadow: 0 1px 2px rgba(0, 0, 0, .03);
@@ -169,10 +153,6 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 
         document.documentElement.classList.add('void-cfg-pending');
 
-        function pad(n) {
-            return n < 10 ? '0' + n : String(n);
-        }
-
         function build() {
             var forms = document.querySelectorAll('form');
             var form = null;
@@ -235,11 +215,8 @@ if (!defined('__TYPECHO_ROOT_DIR__')) {
 
                 var head = document.createElement('div');
                 head.className = 'void-cfg-head';
-                head.innerHTML = '<span class="void-cfg-num">' + pad(index + 1) + '</span>'
-                    + '<h3 class="void-cfg-title"></h3>'
-                    + '<p class="void-cfg-sub"></p>';
+                head.innerHTML = '<h3 class="void-cfg-title"></h3>';
                 head.querySelector('.void-cfg-title').textContent = g.title;
-                head.querySelector('.void-cfg-sub').textContent = g.sub;
                 block.appendChild(head);
 
                 wrap.appendChild(block);
