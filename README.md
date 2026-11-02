@@ -1,4 +1,4 @@
-# Typecho Theme VOID for MultiUser
+# Typecho Theme VOID for MultiUser 3.5.2
 
 > ✏ 一款可能没那么简洁的 Typecho 主题。拿去和朋友们搞点文学结社也许不错。
 
@@ -47,9 +47,9 @@
 
 ## 开始使用
 
-1. 下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases)，注意是下载 VOID-FMU-x.x.x.zip 这个压缩包，而不是 Source code
+1. 下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases)，注意是下载 VOID-x.x.x.zip 这个压缩包，而不是 Source code
 2. 解压
-3. 将**主题文件夹下**的 VOID-FMU 文件夹上传至站点 /usr/themes 目录下
+3. 将**主题文件夹下**的 VOID 文件夹上传至站点 /usr/themes 目录下
 4. 后台启用主题
 5. 将**配套插件文件夹下**的 VOID 文件夹上传至站点 /usr/plugins 目录下
 6. 后台启用插件
@@ -100,7 +100,7 @@
 
 <details><summary>下载安装后样式不对？</summary><br>
 
-仓库中的是未压缩的源代码，包含大量实际使用中不需要的文件，并且可能无法直接使用。请一定通过这两个链接下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases) | [开发版](https://github.com/AlanDecode/Typecho-Theme-VOID/archive/nightly.zip)。注意其中发布版是下载 VOID-FMU-x.x.x.zip 这个压缩包，而不是 Source code。
+仓库中的是未压缩的源代码，包含大量实际使用中不需要的文件，并且可能无法直接使用。请一定通过这两个链接下载主题：[发布版](https://github.com/AlanDecode/Typecho-Theme-VOID/releases) | [开发版](https://github.com/AlanDecode/Typecho-Theme-VOID/archive/nightly.zip)。注意其中发布版是下载 VOID-x.x.x.zip 这个压缩包，而不是 Source code。
 
 </details>
 
@@ -228,16 +228,6 @@ gulp build
 </details>
 
 ## 更新日志
-
-**🍰 2026-11-03 Version 3.5.3**
-
-* 调整：主题目录由 `VOID` 更名为 `VOID-FMU`，升级需重命名 `usr/themes` 下目录，并把数据库 `typecho_options` 的 `theme` 值与 `theme:VOID` 配置行迁移为 `theme:VOID-FMU`。
-* 新增：内置站内搜索，替换 ExSearch 插件；索引收录前台渲染后的纯文本，缓存支持摘要 / 全量两种模式，可一键重建。
-* 新增：代码块「复制代码」按钮，复制成功时图标变绿色对钩并在左侧显示「复制成功」，失败显示红色叉号与「复制失败」。
-* 新增：无刷新跳转支持 Swup / PJAX / 关闭三种模式，NProgress 改为本地独立库。
-* 优化：后台「设置外观」页改为卡片与分组标题布局。
-* 优化：日间模式下导航栏滚动到页面顶部时改为实心黑底。
-* 修复：部分插件覆盖全局 jQuery 导致首页卡片不显示的问题。
 
 **🍰 2026-10-27 Version 3.5.2**
 
