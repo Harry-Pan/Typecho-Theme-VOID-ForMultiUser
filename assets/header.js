@@ -259,6 +259,8 @@ VOID_Ui = {
         } else {
             $('body>header').removeClass('pull-up');
         }
+        /* 处于页面顶部时开启 at-top，供日间模式使用实心底色（见 _header.scss） */
+        $('body>header').toggleClass('at-top', $(document).scrollTop() <= 0);
     },
 
     checkScrollTop: function () {

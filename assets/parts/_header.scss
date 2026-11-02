@@ -22,6 +22,16 @@ header{
         background-color: $headerBgColor-blur;
         backdrop-filter: blur(10px);
     }
+
+    /*
+     * 日间模式下滚到页面最顶端时改用实心黑底：此时导航栏正压在浅色头图上，
+     * 半透明底会让白字发灰、边界模糊。夜间模式保持半透明（头图已被压暗）。
+     */
+    body:not(.theme-dark) &.at-top {
+        background-color: #000;
+        -webkit-backdrop-filter: none;
+        backdrop-filter: none;
+    }
     .container{
         height: 58px;
         @media screen and (max-width:767px)  {

@@ -558,6 +558,7 @@ var VOID = {
         VOID_Ui.lazyload();
         
         VOID_Ui.checkScrollTop();
+        VOID_Ui.checkHeader();
         VOID_Content.countWords();
         VOID_Content.parseTOC();
         VOID_Content.parsePhotos();
