@@ -1,0 +1,240 @@
+/**
+ * 站内搜索
+ *
+ * 导航栏放大镜按钮唤出的搜索层：顶部输入框 + 右侧「搜索」按钮（跳转搜索页），
+ * 下方为即时匹配结果。
+ */
+
+$search-accent: var(--index-hover-color, #bd6262);
+
+.void-search{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity $animationTime $animationTimingFunc;
+
+    &[hidden]{
+        display: none;
+    }
+
+    &.show{
+        opacity: 1;
+    }
+
+    .void-search-overlay{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+        @supports (-webkit-backdrop-filter: blur(12px)) or (backdrop-filter: blur(12px)) {
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+        }
+    }
+
+    .void-search-panel{
+        position: relative;
+        width: calc(100% - 2rem);
+        max-width: 640px;
+        margin: 8vh auto 0;
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+        transform: translateY(-12px);
+        transition: transform $animationTime $animationTimingFunc;
+
+        .theme-dark &{
+            background: #191919;
+        }
+
+        @media screen and (max-width: 767px) {
+            margin-top: 4vh;
+        }
+    }
+
+    &.show .void-search-panel{
+        transform: translateY(0);
+    }
+}
+
+.void-search-bar{
+    display: flex;
+    align-items: center;
+    padding: 0 0.4rem 0 0.2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .theme-dark &{
+        border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .voidicon-search{
+        flex: none;
+        margin: 0 0.55rem;
+        font-size: 1.05rem;
+        line-height: 1;
+        color: $fadeColor;
+
+        .theme-dark &{
+            color: rgba(255, 255, 255, 0.42);
+        }
+    }
+
+    input{
+        flex: 1;
+        min-width: 0;
+        height: 3.1rem;
+        padding: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 1rem;
+        font-family: $void-font-default;
+        color: $textColor;
+
+        .theme-dark &{
+            color: $td-textColor;
+        }
+
+        &::placeholder{
+            color: rgba(0, 0, 0, 0.32);
+        }
+
+        .theme-dark &::placeholder{
+            color: rgba(255, 255, 255, 0.32);
+        }
+    }
+
+    .void-search-goto{
+        flex: none;
+        margin-left: 0.4rem;
+        padding: 0 0.75rem;
+        font-size: 0.82rem;
+        line-height: 1.9;
+        border-radius: 2rem;
+        color: #fff;
+        background: $search-accent;
+        opacity: 0.9;
+        transition: opacity $animationTime $animationTimingFunc;
+
+        &:hover{
+            opacity: 1;
+        }
+    }
+
+    .void-search-close{
+        flex: none;
+        padding: 0.35rem 0.5rem;
+        font-size: 1.35rem;
+        line-height: 1;
+        color: $fadeColor;
+        transition: color $animationTime $animationTimingFunc;
+
+        .theme-dark &{
+            color: rgba(255, 255, 255, 0.42);
+        }
+
+        &:hover{
+            color: $search-accent;
+        }
+    }
+}
+
+.void-search-results{
+    max-height: 56vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.3rem 0 0.5rem;
+
+    @media screen and (max-width: 767px) {
+        max-height: 68vh;
+    }
+}
+
+.void-search-hint{
+    padding: 1.8rem 1rem;
+    text-align: center;
+    font-size: 0.88rem;
+    color: $fadeColor;
+
+    .theme-dark &{
+        color: rgba(255, 255, 255, 0.45);
+    }
+}
+
+.void-search-section-title{
+    padding: 0.55rem 1rem 0.2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: rgba(0, 0, 0, 0.34);
+
+    .theme-dark &{
+        color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+.void-search-item{
+    display: block;
+    padding: 0.5rem 1rem;
+    border-left: 2px solid transparent;
+    transition: background $animationTime $animationTimingFunc, border-color $animationTime $animationTimingFunc;
+
+    &.active,
+    &:hover{
+        background: rgba(0, 0, 0, 0.04);
+        border-left-color: $search-accent;
+
+        .theme-dark &{
+            background: rgba(255, 255, 255, 0.05);
+        }
+    }
+
+    .void-search-item-title{
+        display: block;
+        font-size: 0.94rem;
+        line-height: 1.55;
+        color: $textColor;
+
+        .theme-dark &{
+            color: $td-textColor;
+        }
+    }
+
+    .void-search-item-meta{
+        display: block;
+        margin-top: 0.15rem;
+        font-size: 0.7rem;
+        color: $fadeColor;
+
+        .theme-dark &{
+            color: rgba(255, 255, 255, 0.38);
+        }
+    }
+
+    .void-search-item-excerpt{
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 0.2rem;
+        font-size: 0.78rem;
+        line-height: 1.62;
+        color: $fadeColor;
+
+        .theme-dark &{
+            color: rgba(255, 255, 255, 0.5);
+        }
+    }
+}
+
+mark.search-keyword{
+    background: transparent;
+    color: $search-accent;
+    font-weight: 600;
+}

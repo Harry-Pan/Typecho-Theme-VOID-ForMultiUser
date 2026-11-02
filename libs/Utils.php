@@ -363,6 +363,7 @@ class Utils
             'lazyload' => false,
             'indexBannerTitle' => '',
             'indexBannerSubtitle' => '',
+            'searchEnabled' => true,
             'navBefore' => '',
             'navAfter' => '',
             'serviceworker' => '',
@@ -378,7 +379,7 @@ class Utils
         }
 
         // 允许取值为 "0" 的设置项，不能被上面的 empty() 判断过滤掉
-        $zeroAllowed = array('outdatedNotice', 'indexBannerBlur', 'outdatedDays');
+        $zeroAllowed = array('outdatedNotice', 'indexBannerBlur', 'outdatedDays', 'searchEnabled');
         foreach ($zeroAllowed as $key) {
             $value = $options->{$key};
             if ($value !== null && $value !== '') {
@@ -396,6 +397,7 @@ class Utils
         $themeSetting['outdatedNotice'] = boolval($themeSetting['outdatedNotice']);
         $themeSetting['outdatedDays'] = intval($themeSetting['outdatedDays']);
         $themeSetting['indexBannerBlur'] = intval($themeSetting['indexBannerBlur']);
+        $themeSetting['searchEnabled'] = boolval($themeSetting['searchEnabled']);
 
         // 高级设置
         $advanceSetting = array(

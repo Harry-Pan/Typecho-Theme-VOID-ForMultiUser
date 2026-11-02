@@ -38,6 +38,10 @@ header{
             @media screen and (max-width: 767px) {
                 justify-content: space-around;
             }
+            @media screen and (min-width: 767.5px) and (max-width: 900px) {
+                /* 窄桌面下导航项居中会贴住左侧站名，整体右移一点 */
+                padding-left: 2rem;
+            }
             a, span.dropdown {
                 display: flex;
                 justify-content: center;
@@ -104,7 +108,7 @@ header{
                     &#toggle-setting {
                         display: flex;
                         position: absolute;
-                        right: 1.75rem;;
+                        right: 3.2rem;
                         font-size: 1.4rem;
                         line-height: 1.7;
                     }
@@ -174,102 +178,20 @@ header{
                     display: block;
                 }
             }
-            span.search-form-desktop{
+            #toggle-mobile-search{
+                display: flex;
+                height: auto;
                 position: absolute;
                 right: 0;
                 top: 50%;
                 transform: translateY(-50%);
-                label{
-                    position: absolute;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    left: 0.5rem;
-                }
-                input{
-                    width: 7rem;
-                    height: 1.5rem;
-                    padding: 0.85rem;
-                    padding-left: 3rem;
-                    transition: 0.3s $animationTimingFunc all;
-                    outline: none;
-                    background: none;
-                    border: solid 1px $headerTextColor;
-                    border-radius: 1rem;
-                    color: inherit;
-                    &:focus{
-                        width: 11rem;
-                    }
-                    &::-webkit-input-placeholder{
-                        color: $headerTextColor;
-                        font-size: 1rem;
-                    }
-                }
+                font-size: 1.25rem;
+                line-height: 1;
                 @media screen and (max-width: 767px) {
-                    display: none;
+                    right: -0.55rem;
+                    font-size: 1.4rem;
                 }
             }
-
-            #toggle-mobile-search{
-                display: none;
-                position: absolute;
-                right: -0.55rem;
-                font-size: 1.4rem;
-                line-height: 1.7;
-                @media screen and (max-width: 767px) {
-                    display: flex;
-                }
-            }
-        }
-    }
-    .mobile-search-form{
-        position: absolute;
-        top: 100%;
-        left: 0;
-        transition: 0.3s $animationTimingFunc all;
-        transform: translateY(-10px);
-        visibility: hidden;
-        opacity: 0;
-        width: 100%;
-        display: flex;
-        padding: 0.5rem;
-        background: inherit;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        label{
-            position: absolute;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            left: 0.5rem;
-            top: 0;
-        }
-        input{
-            display: block;
-            flex: 1;
-            border-radius: 0;
-            border: none;
-            outline: none;
-            background: none;
-            padding-left: 3rem;
-            color: inherit;
-            &::-webkit-input-placeholder{
-                color:$headerTextColor;
-                font-size: 1rem;
-            }
-            &::placeholder{
-                color: $headerTextColor;
-            }
-        }
-        button{
-            background: none;
-            outline: none;
-            border: none;
-            color: inherit;
-        }
-        &.opened{
-            transform: translateY(0);
-            visibility: visible;
-            opacity: 1;
         }
     }
     &.pull-up {

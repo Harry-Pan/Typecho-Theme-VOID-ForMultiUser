@@ -19,6 +19,7 @@ require_once('libs/Authors.php');
 require_once('libs/Nav.php');
 require_once('libs/Contents.php');
 require_once('libs/Comments.php');
+require_once('libs/Search.php');
 
 Typecho_Plugin::factory('admin/write-post.php')->bottom = array('Utils', 'addButton');
 Typecho_Plugin::factory('admin/write-page.php')->bottom = array('Utils', 'addButton');
@@ -77,6 +78,9 @@ function themeConfig($form)
     $form->addInput($indexBannerSubtitle);
     $indexHoverColor = new Typecho_Widget_Helper_Form_Element_Text('indexHoverColor', null, '#bd6262', '首页列表悬停色', '鼠标悬停在首页文章卡片上时的描边与标题颜色，例如 #6a96f2。');
     $form->addInput($indexHoverColor);
+
+    $searchEnabled = new Typecho_Widget_Helper_Form_Element_Radio('searchEnabled', array('1' => '启用', '0' => '不启用'), '1', '站内搜索', '启用后导航栏显示放大镜按钮，点击弹出搜索框，在浏览器端即时检索全部文章（标题、正文、分类、标签）。<br>索引文件生成在主题 <code>cache</code> 目录，文章有更新时自动重建；如需立即重建，登录后访问任意页面并在地址后加 <code>?void_search_rebuild=1</code>。');
+    $form->addInput($searchEnabled);
 
 
     $outdatedNotice = new Typecho_Widget_Helper_Form_Element_Radio('outdatedNotice', array('1' => '显示', '0' => '不显示'), '1', '文章过时提醒', '是否在文章页顶部显示「本文编写于 N 天前」的提醒。');

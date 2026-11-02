@@ -81,25 +81,15 @@ if($this->is('post') || $this->is('page')) {
                 </span>
                 <?php endforeach; } ?>
                 <?php echo Nav::desktop(Nav::parse($setting['navAfter']), $this->user->hasLogin()); ?>
-                <?php if(!Utils::isPluginAvailable('ExSearch')): ?>
-                    <span class="hidden-xs search-form-desktop">
-                        <label for="search">搜索</label>
-                        <input onkeydown="VOID.enterSearch(this);" type="text" name="search-content" id="search" required />
-                    </span>
-                <?php endif; ?>
-                <a <?php if(Utils::isPluginAvailable('ExSearch')) echo 'class="search-form-input" style="display:flex"'; ?> 
-                    role=button aria-label="展开搜索" id="toggle-mobile-search" target="_self" 
-                    href="javascript:void(0);" 
-                    onclick="<?php if(!Utils::isPluginAvailable('ExSearch')) echo 'VOID_Ui.toggleSearch(this);'; ?>">
+                <?php if(Search::enabled()): ?>
+                <a role="button" aria-label="搜索" id="toggle-mobile-search" target="_self"
+                    href="javascript:void(0);"
+                    onclick="VOID_Search.open(); return false;">
                     <i class="voidicon-search"></i>
                 </a>
+                <?php endif; ?>
                 <a target="_self" href="javascript:void(0);" id="toggle-setting" onclick="VOID_Ui.toggleSettingPanel();"><i class="voidicon-cog"></i></a>
             </nav>
-        </div>
-        <div class="mobile-search-form">
-            <label for="search_new">搜索</label>
-            <input onkeydown="VOID.enterSearch(this);" type="text" name="search-content" id="search_new" required placeholder="输入内容然后 Go!" />
-            <button onclick="VOID.startSearch('#search_new');">Go!</button>
         </div>
     </header>
     <div id="nav-mobile">

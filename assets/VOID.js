@@ -280,14 +280,9 @@ var VOID = {
         VOID_Vote.reload();
         Share.init();
         AjaxComment.init();
+        VOID_Search.init();
 
         $('body').on('click', function (e) {
-            if (!VOID_Util.clickIn(e, '.mobile-search-form') && !VOID_Util.clickIn(e, '#toggle-mobile-search')) {
-                if ($('.mobile-search-form').hasClass('opened')) {
-                    $('.mobile-search-form').removeClass('opened');
-                    return false;
-                }
-            }
             if (!VOID_Util.clickIn(e, '#toggle-setting-pc') && !VOID_Util.clickIn(e, '#toggle-setting')) {
                 if ($('body').hasClass('setting-panel-show') && !VOID_Util.clickIn(e, '#setting-panel')) {
                     $('body').removeClass('setting-panel-show');
@@ -393,6 +388,346 @@ var VOID = {
         if (event.keyCode == 13) {
             VOID.startSearch(item);
         }
+    }
+};
+
+var VOID_Search = {
+    index: null,
+    loading: false,
+    links: [],
+    active: -1,
+    openedModal: false,
+
+    init: function () {
+        if (!VOIDConfig.searchEnabled) return;
+        var self = this;
+
+        $(document).on('input', '#void-search-input', function () {
+            self.search($(this).val());
+        });
+
+        $(document).on('keydown', '#void-search-input', function (e) {
+            if (e.keyCode === 27) {
+                self.close();
+                e.preventDefault();
+            } else if (e.keyCode === 38) {
+                self.move(-1);
+                e.preventDefault();
+            } else if (e.keyCode === 40) {
+                self.move(1);
+                e.preventDefault();
+            } else if (e.keyCode === 13) {
+                self.enter();
+                e.preventDefault();
+            }
+        });
+
+        $(document).on('mouseenter', '.void-search-results a', function () {
+            self.setActive(parseInt($(this).attr('data-index'), 10));
+        });
+    },
+
+    // 打开搜索层
+    open: function () {
+        if (!VOIDConfig.searchEnabled) return;
+        var $search = $('#void-search');
+        if (!$search.length) return;
+
+        this.links = [];
+        this.active = -1;
+        $('#void-search-input').val('');
+        this.render('<div class="void-search-hint">输入关键词开始搜索</div>');
+
+        $search.prop('hidden', false);
+        window.setTimeout(function () {
+            $search.addClass('show');
+        }, 10);
+
+        if (!this.openedModal) {
+            VOID_Ui.openModal();
+            this.openedModal = true;
+        }
+        setTimeout(function () {
+            $('#void-search-input').focus();
+        }, 30);
+
+        this.load();
+    },
+
+    // 关闭搜索层
+    close: function () {
+        var $search = $('#void-search');
+        if (!$search.length || $search.prop('hidden')) return;
+
+        $search.removeClass('show');
+        window.setTimeout(function () {
+            if (!$search.hasClass('show')) $search.prop('hidden', true);
+        }, 200);
+
+        if (this.openedModal) {
+            VOID_Ui.closeModal();
+            this.openedModal = false;
+        }
+    },
+
+    // 懒加载索引
+    load: function () {
+        if (this.index || this.loading) return;
+        var self = this;
+        this.loading = true;
+
+        $.getJSON(VOIDConfig.searchIndex)
+            .done(function (data) {
+                self.loading = false;
+                self.index = data;
+                self.search($('#void-search-input').val());
+            })
+            .fail(function () {
+                self.loading = false;
+                self.render('<div class="void-search-hint">搜索索引加载失败，请稍后重试。</div>');
+            });
+    },
+
+    // 使用主题自带的搜索页
+    gotoSearchPage: function () {
+        var $input = $('#void-search-input');
+        var value = $.trim($input.val() || '');
+        if (!value) {
+            $input.focus();
+            return;
+        }
+        var url = VOIDConfig.searchBase + encodeURIComponent(value);
+        this.close();
+        if (VOIDConfig.PJAX && VOID_JQ && VOID_JQ.has('pjax')) {
+            $.pjax({
+                url: url,
+                container: '#pjax-container',
+                fragment: '#pjax-container',
+                timeout: 8000,
+            });
+        } else {
+            window.open(url, '_self');
+        }
+    },
+
+    // 回车：有选中项则跳转该项，否则跳转搜索页
+    enter: function () {
+        if (this.active >= 0 && this.links[this.active]) {
+            var target = this.links[this.active];
+            this.close();
+            window.location.href = target;
+        } else {
+            this.gotoSearchPage();
+        }
+    },
+
+    move: function (step) {
+        if (!this.links.length) return;
+        var next = this.active + step;
+        if (next < 0) next = this.links.length - 1;
+        if (next >= this.links.length) next = 0;
+        this.setActive(next);
+    },
+
+    setActive: function (index) {
+        this.active = index;
+        $('.void-search-results a').removeClass('active');
+        var $link = $('.void-search-results a[data-index="' + index + '"]');
+        $link.addClass('active');
+
+        var scroll = $('.void-search-results')[0];
+        if ($link.length && scroll) {
+            var top = $link[0].offsetTop;
+            if (top < scroll.scrollTop || top + $link.outerHeight() > scroll.scrollTop + scroll.clientHeight) {
+                scroll.scrollTop = top - scroll.clientHeight / 2;
+            }
+        }
+    },
+
+    render: function (html) {
+        $('#void-search-results').html(html);
+    },
+
+    search: function (query) {
+        if (!this.index) return;
+        var text = $.trim(String(query || ''));
+        if (!text) {
+            this.links = [];
+            this.active = -1;
+            this.render('<div class="void-search-hint">输入关键词开始搜索</div>');
+            return;
+        }
+
+        var words = text.toUpperCase().split(/\s+/).filter(function (word) {
+            return word.length > 0;
+        });
+
+        var posts = this.collect(this.index.posts || [], words);
+        var pages = this.collect(this.index.pages || [], words);
+        var categories = this.collectMeta(this.index.posts || [], words, 'categories');
+        var tags = this.collectMeta(this.index.posts || [], words, 'tags');
+
+        var self = this;
+        var index = 0;
+        var links = [];
+
+        function section(title, items) {
+            if (!items.length) return '';
+            return '<section class="void-search-section"><div class="void-search-section-title">'
+                + title + '</div>' + items.join('') + '</section>';
+        }
+
+        var postItems = posts.map(function (entry) {
+            var item = entry.item;
+            links.push(item.path);
+            return self.buildItem(item.path, self.highlight(item.title, words),
+                self.escapeHtml(item.date), self.highlight(self.excerpt(item.text, words), words), index++);
+        });
+
+        var pageItems = pages.map(function (entry) {
+            var item = entry.item;
+            links.push(item.path);
+            return self.buildItem(item.path, self.highlight(item.title, words),
+                self.escapeHtml(item.date), self.highlight(self.excerpt(item.text, words), words), index++);
+        });
+
+        var categoryItems = categories.map(function (meta) {
+            links.push(meta.permalink);
+            return self.buildItem(meta.permalink, self.highlight(meta.name, words), '', '', index++);
+        });
+
+        var tagItems = tags.map(function (meta) {
+            links.push(meta.permalink);
+            return self.buildItem(meta.permalink, self.highlight(meta.name, words), '', '', index++);
+        });
+
+        var html = section('文章', postItems)
+            + section('页面', pageItems)
+            + section('分类', categoryItems)
+            + section('标签', tagItems);
+
+        if (!html) {
+            html = '<div class="void-search-hint">没有找到与「' + this.escapeHtml(text) + '」相关的内容</div>';
+        }
+
+        this.links = links;
+        this.active = -1;
+        this.render(html);
+    },
+
+    buildItem: function (href, title, meta, excerpt, index) {
+        return '<a class="void-search-item" data-index="' + index + '" href="' + this.escapeHtml(href) + '">'
+            + '<span class="void-search-item-title">' + title + '</span>'
+            + (meta ? '<span class="void-search-item-meta">' + meta + '</span>' : '')
+            + (excerpt ? '<span class="void-search-item-excerpt">' + excerpt + '</span>' : '')
+            + '</a>';
+    },
+
+    collect: function (items, words) {
+        var out = [];
+        items.forEach(function (item) {
+            var title = (item.title || '').toUpperCase();
+            var body = (item.text || '').toUpperCase();
+            var hay = title + ' ' + body;
+
+            for (var i = 0; i < words.length; i++) {
+                if (hay.indexOf(words[i]) === -1) return;
+            }
+
+            var score = 0;
+            words.forEach(function (word) {
+                if (title.indexOf(word) !== -1) score += 3;
+                if (body.indexOf(word) !== -1) score += 1;
+            });
+            out.push({ item: item, score: score });
+        });
+        out.sort(function (a, b) {
+            return b.score - a.score;
+        });
+        return out;
+    },
+
+    collectMeta: function (posts, words, key) {
+        var seen = {};
+        var out = [];
+        posts.forEach(function (post) {
+            (post[key] || []).forEach(function (meta) {
+                if (seen[meta.name]) return;
+                var hay = ((meta.name || '') + ' ' + (meta.slug || '')).toUpperCase();
+                var matched = words.every(function (word) {
+                    return hay.indexOf(word) !== -1;
+                });
+                if (matched) {
+                    seen[meta.name] = true;
+                    out.push(meta);
+                }
+            });
+        });
+        return out;
+    },
+
+    highlight: function (text, words) {
+        text = String(text || '');
+        var lower = text.toLowerCase();
+        var ranges = [];
+        var self = this;
+
+        words.forEach(function (word) {
+            var needle = word.toLowerCase();
+            var from = 0;
+            var at;
+            while ((at = lower.indexOf(needle, from)) !== -1) {
+                ranges.push([at, at + needle.length]);
+                from = at + needle.length;
+            }
+        });
+
+        if (!ranges.length) return self.escapeHtml(text);
+
+        ranges.sort(function (a, b) {
+            return a[0] - b[0];
+        });
+        var merged = [ranges[0]];
+        for (var i = 1; i < ranges.length; i++) {
+            var last = merged[merged.length - 1];
+            if (ranges[i][0] <= last[1]) {
+                last[1] = Math.max(last[1], ranges[i][1]);
+            } else {
+                merged.push(ranges[i]);
+            }
+        }
+
+        var html = '';
+        var pos = 0;
+        merged.forEach(function (range) {
+            html += self.escapeHtml(text.slice(pos, range[0]));
+            html += '<mark class="search-keyword">' + self.escapeHtml(text.slice(range[0], range[1])) + '</mark>';
+            pos = range[1];
+        });
+        html += self.escapeHtml(text.slice(pos));
+        return html;
+    },
+
+    excerpt: function (text, words) {
+        text = String(text || '');
+        if (!text) return '';
+        var lower = text.toLowerCase();
+        var at = -1;
+        words.forEach(function (word) {
+            var found = lower.indexOf(word.toLowerCase());
+            if (found !== -1 && (at === -1 || found < at)) at = found;
+        });
+        var start = at === -1 ? 0 : Math.max(0, at - 20);
+        var slice = text.substr(start, 90);
+        return (start > 0 ? '…' : '') + slice + (start + 90 < text.length ? '…' : '');
+    },
+
+    escapeHtml: function (str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
     }
 };
 

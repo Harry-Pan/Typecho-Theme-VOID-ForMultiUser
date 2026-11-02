@@ -133,6 +133,34 @@ $setting = $GLOBALS['VOIDSetting'];
         }
         </script>
         <?php endif; ?>
+        <?php
+        // 站内搜索：索引按需重建；登录用户可通过 ?void_search_rebuild=1 强制重建
+        if (Search::enabled()) {
+            if ($this->request->get('void_search_rebuild') && $this->user->hasLogin()) {
+                Search::build();
+            }
+            Search::refresh();
+        }
+        ?>
+        <?php if(Search::enabled()): ?>
+        <div class="void-search" id="void-search" hidden>
+            <div class="void-search-overlay" onclick="VOID_Search.close();"></div>
+            <div class="void-search-panel" role="dialog" aria-modal="true" aria-label="站内搜索">
+                <div class="void-search-bar">
+                    <i class="voidicon-search"></i>
+                    <input type="text" id="void-search-input" autocomplete="off" autocorrect="off"
+                        autocapitalize="off" spellcheck="false" placeholder="搜索文章、页面、分类或标签" />
+                    <a class="void-search-goto" role="button" title="在搜索结果页中查看"
+                        href="javascript:void(0);"
+                        onclick="VOID_Search.gotoSearchPage(); return false;">搜索</a>
+                    <a class="void-search-close" role="button" aria-label="关闭搜索"
+                        href="javascript:void(0);"
+                        onclick="VOID_Search.close(); return false;">×</a>
+                </div>
+                <div class="void-search-results" id="void-search-results"></div>
+            </div>
+        </div>
+        <?php endif; ?>
         <script data-manual src="<?php Utils::asset('/assets/bundle.js'); ?>"></script>
         <?php if($setting['enableMath']): ?>
         <script src='<?php Utils::indexTheme('/assets/libs/mathjax/2.7.9/MathJax.js'); ?>'></script>
@@ -149,18 +177,6 @@ $setting = $GLOBALS['VOIDSetting'];
             $(document).on('pjax:complete',function(){
                 <?php echo $setting['pjaxreload']; ?>
             })
-            <?php if(Utils::isPluginAvailable('ExSearch')): ?>
-            function ExSearchCall(item){
-                if (item && item.length) {
-                    $('.ins-close').click(); // 关闭搜索框
-                    let url = item.attr('data-url'); // 获取目标页面 URL
-                    $.pjax({url: url, 
-                        container: '#pjax-container',
-                        fragment: '#pjax-container',
-                        timeout: 8000, }); // 发起一次 PJAX 请求
-                }
-            }
-            <?php endif; ?>
         </script>
         <?php endif; ?>
         <?php $this->footer(); ?>
