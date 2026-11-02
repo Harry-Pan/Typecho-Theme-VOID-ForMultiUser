@@ -1,4 +1,4 @@
-# Typecho Theme VOID for MultiUser 3.5.2
+# Typecho Theme VOID for MultiUser
 
 > ✏ 一款可能没那么简洁的 Typecho 主题。拿去和朋友们搞点文学结社也许不错。
 
