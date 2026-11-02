@@ -162,6 +162,9 @@ $setting = $GLOBALS['VOIDSetting'];
         <?php if($setting['enableMath']): ?>
         <script src='<?php Utils::indexTheme('/assets/libs/mathjax/2.7.9/MathJax.js'); ?>'></script>
         <?php endif; ?>
+        <?php if($setting['pjax']): ?>
+        <script src="<?php Utils::asset('/assets/libs/swup/swup.umd.js'); ?>"></script>
+        <?php endif; ?>
         <script src="<?php Utils::asset('/assets/VOID.js'); ?>"></script>
         <?php
         /*
@@ -171,9 +174,10 @@ $setting = $GLOBALS['VOIDSetting'];
         ?>
         <?php if($setting['pjax']): ?>
         <script>
-            $(document).on('pjax:complete',function(){
-                <?php echo $setting['pjaxreload']; ?>
-            })
+        // 用户自定义的「切换后执行的 JS」，由 VOID.afterPjax() 统一调用
+        window.VOID_PJAX_RELOAD = function () {
+<?php echo $setting['pjaxreload']; ?>
+        };
         </script>
         <?php endif; ?>
         <?php $this->footer(); ?>

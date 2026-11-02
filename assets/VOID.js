@@ -168,23 +168,7 @@ var VOID_Content = {
             }
         });
 
-        if (VOIDConfig.PJAX) {
-            VOID_JQ.ensure();
-            if (!VOID_JQ.has('pjax')) {
-                VOID_JQ.warn('PJAX 不可用（jQuery 插件被其他插件覆盖且无法恢复），已退化为普通跳转。');
-                return;
-            }
-            $.each($('a:not(a[target="_blank"], a[no-pjax])'), function (i, item) {
-                if (item.hostname == domain) {
-                    $(item).addClass('pjax');
-                }
-            });
-            $(document).pjax('a.pjax', {
-                container: '#pjax-container',
-                fragment: '#pjax-container',
-                timeout: 8000
-            });
-        }
+        VOID_Nav.attach();
     },
 
     highlight: function () {
@@ -252,6 +236,208 @@ var VOID_Content = {
     }
 };
 
+/*
+ * 页面跳转：优先 Swup，其次回退到 jQuery.pjax，最后退化为整页跳转。
+ * 所有「主题自己发起的跳转」（搜索页等）都应走 VOID_Nav.navigate()，
+ * 这样两种引擎都能接管。
+ */
+var VOID_Nav = {
+    mode: null,       // 'swup' | 'pjax' | null
+    swup: null,
+    attached: false,
+    positions: {},    // 各页面的滚动位置，用于后退时恢复
+    pendingRestore: null,
+
+    // 当前是否支持无刷新跳转
+    available: function () {
+        return this.mode !== null;
+    },
+
+    /*
+     * 判断某个链接是否应该交给浏览器整页处理。
+     * 返回 true = 不拦截。
+     */
+    ignored: function (url, context) {
+        var el = context && context.el;
+
+        if (el) {
+            if ($(el).attr('no-pjax') !== undefined || el.closest('[data-no-swup]')) {
+                return true;
+            }
+            if (el.hasAttribute('download')) {
+                return true;
+            }
+            var target = el.getAttribute('target');
+            if (target && target !== '_self' && target !== '_top') {
+                return true;
+            }
+        }
+
+        var href = url.href || '';
+        if (href.indexOf('javascript:') === 0 || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) {
+            return true;
+        }
+
+        // 页内锚点交给浏览器原生滚动（目录、脚注等）
+        if (url.hash && url.pathname === window.location.pathname && url.search === window.location.search && !context) {
+            return true;
+        }
+        if (el && el.getAttribute('href') && el.getAttribute('href').charAt(0) === '#') {
+            return true;
+        }
+
+        return false;
+    },
+
+    // 绑定一次引擎与生命周期事件
+    attach: function () {
+        if (this.attached) {
+            return;
+        }
+        this.attached = true;
+
+        if (!VOIDConfig.PJAX) {
+            return;
+        }
+
+        var self = this;
+
+        if (window.Swup) {
+            this.swup = new Swup({
+                containers: ['#pjax-container'],
+                linkSelector: 'a[href]',
+                timeout: 8000,
+                cache: true,
+                requestHeaders: {
+                    'X-Requested-With': 'swup',
+                    'Accept': 'text/html, application/xhtml+xml',
+                    'X-PJAX': '1'
+                },
+                ignoreVisit: function (url, context) {
+                    return self.ignored(url, context);
+                }
+            });
+            this.mode = 'swup';
+
+            this.swup.hooks.on('visit:start', function (visit) {
+                if (visit.history && visit.history.popstate) {
+                    // 后退/前进：先记下即将离开页面的位置，再恢复目标页面的位置
+                    visit.scroll.reset = false;
+                    var leaving = visit.from && visit.from.url;
+                    if (leaving) {
+                        self.positions[leaving] = window.scrollY;
+                    }
+                    var landing = visit.to && visit.to.url;
+                    self.pendingRestore = (landing && self.positions[landing] != null)
+                        ? self.positions[landing]
+                        : null;
+                } else {
+                    // 普通跳转：记住当前页面的位置
+                    var current = visit.from && visit.from.url;
+                    if (current) {
+                        self.positions[current] = window.scrollY;
+                    }
+                    self.pendingRestore = null;
+                }
+                VOID.beforePjax();
+            });
+
+            this.swup.hooks.on('content:replace', function () {
+                VOID.afterPjax();
+            });
+
+            this.swup.hooks.on('page:view', function () {
+                if (self.pendingRestore === null) {
+                    return;
+                }
+                var y = self.pendingRestore;
+                self.pendingRestore = null;
+                // 等一帧，让 Masonry 等布局完成后再定位
+                window.requestAnimationFrame(function () {
+                    window.requestAnimationFrame(function () {
+                        window.scrollTo(0, y);
+                    });
+                });
+            });
+
+            this.swup.hooks.on('visit:end', function () {
+                VOID.endPjax();
+            });
+
+            this.swup.hooks.on('visit:fail', function (visit, args) {
+                NProgress.done();
+                if (!visit || visit.aborted || !visit.to || !visit.to.url) {
+                    return;
+                }
+                /*
+                 * 目标页面无法被接管时（404、服务端异常、容器缺失等），
+                 * 退回整页加载，避免停在空白标题 / 半渲染状态。
+                 */
+                if (args && args.error) {
+                    window.location.href = visit.to.url;
+                }
+            });
+
+            return;
+        }
+
+        // 回退：jQuery.pjax
+        VOID_JQ.ensure();
+        if (!VOID_JQ.has('pjax')) {
+            VOID_JQ.warn('PJAX 不可用（jQuery 插件被其他插件覆盖且无法恢复），已退化为普通跳转。');
+            this.mode = null;
+            return;
+        }
+
+        this.mode = 'pjax';
+
+        var domain = document.domain;
+        $.each($('a:not(a[target="_blank"], a[no-pjax])'), function (i, item) {
+            if (item.hostname == domain) {
+                $(item).addClass('pjax');
+            }
+        });
+
+        $(document).pjax('a.pjax', {
+            container: '#pjax-container',
+            fragment: '#pjax-container',
+            timeout: 8000
+        });
+
+        $(document).on('pjax:send', function () {
+            VOID.beforePjax();
+        });
+
+        $(document).on('pjax:complete', function () {
+            VOID.afterPjax();
+        });
+
+        $(document).on('pjax:end', function () {
+            VOID.endPjax();
+        });
+    },
+
+    // 主题主动发起的跳转
+    navigate: function (url) {
+        this.attach();
+
+        if (this.mode === 'swup' && this.swup) {
+            this.swup.navigate(url);
+            return;
+        }
+        if (this.mode === 'pjax' && VOID_JQ.has('pjax')) {
+            $.pjax({
+                url: url,
+                container: '#pjax-container',
+                fragment: '#pjax-container',
+                timeout: 8000
+            });
+            return;
+        }
+        window.open(url, '_self');
+    }
+};
+
 var VOID = {
     // 初始化单页应用
     init: function () {
@@ -306,6 +492,18 @@ var VOID = {
         VOID_JQ.ensure();
         NProgress.done();
 
+        /*
+         * 片段响应里没有 <head><title>，标题放在容器内隐藏的 <title> 中，
+         * 这里取出来补到 document.title（Swup 只替换容器）。
+         */
+        var $fragTitle = $('#pjax-container title').first();
+        if ($fragTitle.length) {
+            var fragTitle = $.trim($fragTitle.text());
+            if (fragTitle) {
+                document.title = fragTitle;
+            }
+        }
+
         VOID_Content.parseBoardThumbs();
 
         if ($('#loggin-form').length) {
@@ -332,6 +530,15 @@ var VOID = {
         Share.init();
 
         AjaxComment.init();
+
+        // 用户自定义的「切换后执行的 JS」
+        if (typeof window.VOID_PJAX_RELOAD === 'function') {
+            try {
+                window.VOID_PJAX_RELOAD();
+            } catch (e) {
+                console.warn('[VOID] pjaxreload 执行出错：' + e.message);
+            }
+        }
     },
 
     endPjax: function () {
@@ -370,17 +577,7 @@ var VOID = {
             $(item).attr('placeholder', '你还没有输入任何信息');
             return;
         }
-        var t = VOIDConfig.searchBase + c;
-        if (VOIDConfig.PJAX && VOID_JQ.has('pjax')) {
-            $.pjax({
-                url: t,
-                container: '#pjax-container',
-                fragment: '#pjax-container',
-                timeout: 8000,
-            });
-        } else {
-            window.open(t, '_self');
-        }
+        VOID_Nav.navigate(VOIDConfig.searchBase + c);
     },
     
     enterSearch: function (item) {
@@ -498,16 +695,7 @@ var VOID_Search = {
         }
         var url = VOIDConfig.searchBase + encodeURIComponent(value);
         this.close();
-        if (VOIDConfig.PJAX && VOID_JQ && VOID_JQ.has('pjax')) {
-            $.pjax({
-                url: url,
-                container: '#pjax-container',
-                fragment: '#pjax-container',
-                timeout: 8000,
-            });
-        } else {
-            window.open(url, '_self');
-        }
+        VOID_Nav.navigate(url);
     },
 
     // 回车：有选中项则跳转该项，否则跳转搜索页
@@ -1146,19 +1334,6 @@ var AjaxComment = {
 (function () {
     $(document).ready(function () {
         VOID.init();
-        if (VOIDConfig.PJAX) {
-            $(document).on('pjax:send', function () {
-                VOID.beforePjax();
-            });
-    
-            $(document).on('pjax:complete', function () {
-                VOID.afterPjax();
-            });
-    
-            $(document).on('pjax:end', function () {	
-                VOID.endPjax();
-            });
-        }
     });
 
     window.setInterval(function () {
