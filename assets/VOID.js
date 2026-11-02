@@ -607,7 +607,12 @@ var VOID_Search = {
             + section('标签', tagItems);
 
         if (!html) {
-            html = '<div class="void-search-hint">没有找到与「' + this.escapeHtml(text) + '」相关的内容</div>';
+            if (VOIDConfig.searchCacheMode === 'full') {
+                html = '<div class="void-search-hint">没有找到与「' + this.escapeHtml(text) + '」相关的内容</div>';
+            } else {
+                html = '<div class="void-search-hint">未搜索到摘要包含“' + this.escapeHtml(text)
+                    + '”的结果。<br>点击“搜索”以查看更多结果。</div>';
+            }
         }
 
         this.links = links;

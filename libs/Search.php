@@ -13,17 +13,20 @@
 
 class Search
 {
-    /** 索引文件名 */
-    const FILENAME = 'search-index.json';
-
     /** 索引格式版本，结构变动时递增 */
-    const VERSION = 1;
+    const VERSION = 2;
 
-    /** 正文截断长度（字符），避免索引过大 */
+    /** 摘要模式下正文截断长度（字符） */
     const EXCERPT = 600;
 
     /** 自动检查间隔（秒）：小于该时间不再查库 */
     const TTL = 120;
+
+    /** 可选的索引模式 */
+    const MODES = array(
+        'excerpt' => '摘要缓存',
+        'full' => '全量缓存',
+    );
 
     /**
      * 索引所在目录
@@ -34,16 +37,47 @@ class Search
     }
 
     /**
-     * 索引文件绝对路径
+     * 当前索引模式
      */
-    public static function path()
+    public static function mode()
     {
-        return self::dir() . '/' . self::FILENAME;
+        $setting = isset($GLOBALS['VOIDSetting']) ? $GLOBALS['VOIDSetting'] : array();
+        $mode = isset($setting['searchCacheMode']) ? $setting['searchCacheMode'] : 'excerpt';
+        return isset(self::MODES[$mode]) ? $mode : 'excerpt';
     }
 
-    public static function exists()
+    /**
+     * 模式的可读名称
+     */
+    public static function label($mode = null)
     {
-        return is_file(self::path());
+        $mode = $mode ? $mode : self::mode();
+        return isset(self::MODES[$mode]) ? self::MODES[$mode] : $mode;
+    }
+
+    /**
+     * 指定模式的索引文件名
+     */
+    public static function fileFor($mode = null)
+    {
+        $mode = $mode ? $mode : self::mode();
+        return 'search-index-' . (isset(self::MODES[$mode]) ? $mode : 'excerpt') . '.json';
+    }
+
+    /**
+     * 索引文件绝对路径
+     */
+    public static function path($mode = null)
+    {
+        return self::dir() . '/' . self::fileFor($mode);
+    }
+
+    /**
+     * 索引文件是否存在
+     */
+    public static function exists($mode = null)
+    {
+        return is_file(self::path($mode));
     }
 
     /**
@@ -57,10 +91,10 @@ class Search
     /**
      * 索引文件地址（字符串）
      */
-    public static function urlString()
+    public static function urlString($mode = null)
     {
-        $path = '/cache/' . self::FILENAME;
-        $file = self::dir() . '/' . self::FILENAME;
+        $file = self::path($mode);
+        $path = '/cache/' . self::fileFor($mode);
         if (is_file($file)) {
             $path .= '?v=' . filemtime($file);
         }
@@ -79,29 +113,46 @@ class Search
     /**
      * 索引是否为空（没有任何文章）
      */
-    public static function isEmpty()
+    public static function isEmpty($mode = null)
     {
-        $meta = self::meta();
-        return !$meta || (empty($meta['posts']) && empty($meta['pages']));
+        $meta = self::meta($mode);
+        return !$meta || empty($meta['count']);
+    }
+
+    /**
+     * 索引状态摘要，供后台展示
+     */
+    public static function status($mode = null)
+    {
+        $meta = self::meta($mode);
+        if (!$meta) {
+            return null;
+        }
+        $meta['bytes'] = @filesize(self::path($mode));
+        $meta['label'] = self::label($mode);
+        return $meta;
     }
 
     /**
      * 读取索引元信息（只解析文件开头，避免整份 JSON 进内存）
      */
-    public static function meta()
+    public static function meta($mode = null)
     {
-        if (!self::exists()) {
+        if (!self::exists($mode)) {
             return null;
         }
-        $head = @file_get_contents(self::path(), false, null, 0, 4096);
+        $head = @file_get_contents(self::path($mode), false, null, 0, 4096);
         if ($head === false) {
             return null;
         }
         $meta = array();
-        foreach (array('version', 'built', 'maxModified', 'excerpt') as $key) {
+        foreach (array('version', 'built', 'maxModified', 'excerpt', 'count') as $key) {
             if (preg_match('/"' . $key . '":(\d+)/', $head, $match)) {
                 $meta[$key] = (int)$match[1];
             }
+        }
+        if (preg_match('/"mode":"(excerpt|full)"/', $head, $match)) {
+            $meta['mode'] = $match[1];
         }
         if (!isset($meta['version'])) {
             return null;
@@ -114,8 +165,12 @@ class Search
      *
      * @return array|false 成功返回 ['count'=>条目数, 'bytes'=>文件大小]
      */
-    public static function build()
+    public static function build($mode = null)
     {
+        $mode = $mode ? $mode : self::mode();
+        if (!isset(self::MODES[$mode])) {
+            $mode = 'excerpt';
+        }
         $db = Typecho_Db::get();
         $options = Helper::options();
 
@@ -149,8 +204,10 @@ class Search
 
         $data = array(
             'version' => self::VERSION,
+            'mode' => $mode,
             'built' => time(),
-            'excerpt' => self::EXCERPT,
+            'excerpt' => $mode === 'excerpt' ? self::EXCERPT : 0,
+            'count' => 0,
             'maxModified' => 0,
             'posts' => array(),
             'pages' => array(),
@@ -182,7 +239,9 @@ class Search
                         'cid' => $row['cid'],
                         'slug' => $row['slug'],
                     ), $options),
-                    'text' => mb_substr($text, 0, self::EXCERPT, 'UTF-8'),
+                    'text' => $mode === 'excerpt'
+                        ? mb_substr($text, 0, self::EXCERPT, 'UTF-8')
+                        : $text,
                 );
 
                 if ($type === 'post') {
@@ -210,6 +269,7 @@ class Search
             }
         }
 
+        $data['count'] = count($data['posts']) + count($data['pages']);
         $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         if ($json === false) {
             return false;
@@ -220,18 +280,20 @@ class Search
             return false;
         }
 
-        $tmp = self::path() . '.' . getmypid() . '.tmp';
+        $target = self::path($mode);
+        $tmp = $target . '.' . getmypid() . '.tmp';
         if (@file_put_contents($tmp, $json) === false) {
             return false;
         }
-        if (!@rename($tmp, self::path())) {
+        if (!@rename($tmp, $target)) {
             @unlink($tmp);
             return false;
         }
 
         return array(
-            'count' => count($data['posts']) + count($data['pages']),
+            'count' => $data['count'],
             'bytes' => strlen($json),
+            'mode' => $mode,
         );
     }
 
@@ -240,7 +302,8 @@ class Search
      */
     public static function refresh()
     {
-        $path = self::path();
+        $mode = self::mode();
+        $path = self::path($mode);
 
         if (is_file($path) && time() - filemtime($path) < self::TTL) {
             return;
@@ -256,8 +319,8 @@ class Search
         }
 
         try {
-            if (!is_file($path) || self::isStale($path)) {
-                self::build();
+            if (!is_file($path) || self::isStale($path, $mode)) {
+                self::build($mode);
             }
         } finally {
             flock($lock, LOCK_UN);
@@ -268,10 +331,13 @@ class Search
     /**
      * 索引是否落后于数据库
      */
-    private static function isStale($path)
+    private static function isStale($path, $mode)
     {
-        $meta = self::meta();
+        $meta = self::meta($mode);
         if (!$meta || !isset($meta['version']) || $meta['version'] !== self::VERSION) {
+            return true;
+        }
+        if (!isset($meta['mode']) || $meta['mode'] !== $mode) {
             return true;
         }
 

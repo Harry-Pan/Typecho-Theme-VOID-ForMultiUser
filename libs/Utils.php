@@ -364,6 +364,7 @@ class Utils
             'indexBannerTitle' => '',
             'indexBannerSubtitle' => '',
             'searchEnabled' => true,
+            'searchCacheMode' => 'excerpt',
             'navBefore' => '',
             'navAfter' => '',
             'serviceworker' => '',
@@ -398,6 +399,9 @@ class Utils
         $themeSetting['outdatedDays'] = intval($themeSetting['outdatedDays']);
         $themeSetting['indexBannerBlur'] = intval($themeSetting['indexBannerBlur']);
         $themeSetting['searchEnabled'] = boolval($themeSetting['searchEnabled']);
+        if (!in_array($themeSetting['searchCacheMode'], array('excerpt', 'full'), true)) {
+            $themeSetting['searchCacheMode'] = 'excerpt';
+        }
 
         // 高级设置
         $advanceSetting = array(

@@ -68,6 +68,7 @@ if (isset($_POST['void_action'])) {
         searchBase : "<?php Utils::index("/search/"); ?>",
         searchEnabled : <?php echo Search::enabled() ? 'true' : 'false'; ?>,
         searchIndex : "<?php echo Search::urlString(); ?>",
+        searchCacheMode : "<?php echo Search::mode(); ?>",
         home: "<?php Utils::index("/"); ?>",
         buildTime : "<?php Utils::getBuildTime(); ?>",
         enableMath : <?php echo $setting['enableMath'] ? 'true' : 'false'; ?>,
