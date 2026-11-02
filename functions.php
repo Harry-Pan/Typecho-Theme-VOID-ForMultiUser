@@ -107,7 +107,7 @@ function themeConfig($form)
     $indexHoverColor = new Typecho_Widget_Helper_Form_Element_Text('indexHoverColor', null, '#bd6262', '首页列表悬停色', '鼠标悬停在首页文章卡片上时的描边与标题颜色，例如 #6a96f2。');
     $form->addInput($indexHoverColor);
 
-    $searchEnabled = new Typecho_Widget_Helper_Form_Element_Radio('searchEnabled', array('1' => '启用', '0' => '不启用'), '1', '站内搜索', '启用后导航栏显示放大镜按钮，点击弹出搜索框，在浏览器端即时检索全部文章（标题、正文、分类、标签）。<br>索引文件生成在主题 <code>cache</code> 目录，文章有更新时自动重建；可在下方「搜索索引缓存」中一键重建。');
+    $searchEnabled = new Typecho_Widget_Helper_Form_Element_Radio('searchEnabled', array('1' => '启用', '0' => '不启用'), '1', '即时搜索', '启用后导航栏的搜索栏改为搜索按钮，点击弹出搜索框，在浏览器端即时检索全部文章（标题、正文、分类、标签）。<br>索引文件生成在主题 cache 目录，文章有更新时自动重建；可在下方「搜索索引缓存」中一键重建。');
     $form->addInput($searchEnabled);
 
     // 索引缓存模式
@@ -132,10 +132,11 @@ function themeConfig($form)
         array('excerpt' => '摘要缓存', 'full' => '全量缓存'),
         'excerpt',
         '搜索索引缓存',
-        '摘要缓存只收录正文前 600 字，索引约 1 MB，加载快，但搜不到正文靠后的内容；'
-        . '全量缓存收录全文（约 5 MB），结果与 Typecho 自带搜索一致。<br>'
+        '摘要缓存只收录正文前 600 字，加载快，但搜不到正文靠后的内容；'
+        . '全量缓存收录全文，包含绝大多数可搜索内容，可能影响加载速度。'
+        . '与 Typecho 内置搜索的区别请查阅主题文档。<br>'
         . '两种索引各自独立保存，切换模式后自动重建，互不覆盖。<br>'
-        . '当前索引：' . $voidStatusText . '<br>'
+        . '当前状态：' . $voidStatusText . '<br>'
         . '<a class="btn" href="javascript:void(0);" '
         . 'onclick="var u=new URL(location.href);u.searchParams.set(\'void_rebuild_index\',\'1\');location.href=u.href;return false;">'
         . '立即重建索引</a>'
