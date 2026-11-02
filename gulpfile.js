@@ -85,8 +85,11 @@ gulp.task('md5', function () {
 
 // 无需处理的文件
 gulp.task('move', function () {
-    gulp.src(['./assets/libs/owo/**/*', './assets/libs/mathjax/**/*'], { base: './assets/libs/' })
+    gulp.src(['./assets/libs/owo/**/*', './assets/libs/mathjax/**/*', './assets/libs/swup/**/*'], { base: './assets/libs/' })
         .pipe(gulp.dest('./build/assets/libs/'));
+    // 保留缓存目录（搜索索引在运行时生成，目录本身要随包发布）
+    gulp.src(['./cache/.gitignore'], { base: './' })
+        .pipe(gulp.dest('./build/'));
     gulp.src(['./assets/sw-toolbox.js', './assets/VOIDCacheRule.js'])
         .pipe(gulp.dest('./build/assets/'));
     gulp.src(['./assets/fonts/*'])

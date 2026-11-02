@@ -7,3 +7,6 @@ assets/bundle*.css
 assets/VOID*.css
 assets/VOID*.css.map
 .DS_Store
+# 搜索索引缓存（运行时生成）
+cache/*.json
+cache/.search.lock
