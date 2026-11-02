@@ -187,6 +187,9 @@ var VOID_Content = {
         });
         
         Prism.highlightAll();
+
+        // 高亮完成后再注入复制按钮，避免 Prism 重写内容时冲掉按钮
+        VOID_CodeClipboard.load();
     },
 
     // 初始化注脚（littlefoot，原 bigfoot.js 的替代）
@@ -233,6 +236,161 @@ var VOID_Content = {
 
     hyphenate: function() {
         $('div.articleBody p, div.articleBody blockquote').hyphenate('en-us');
+    }
+};
+
+/*
+ * 代码块复制按钮
+ *
+ * 每个 .yue pre 里注入一个绝对定位按钮，复制 <code> 的纯文本
+ * （mac 标题栏文字和行号都在 code 之外，不会被复制进去）。
+ * 不使用 toast：复制成功后图标变成绿色对钩，并在按钮左侧浮现「复制成功」，
+ * 2 秒后复原；失败时同理，红色叉号 +「复制失败」。
+ *
+ * 由 VOID_Content.highlight() 调用，所以首次加载、Swup 换页、
+ * 评论 AJAX 插入后都会自动补上按钮；load() 内部有去重守卫，重复调用安全。
+ */
+var VOID_CodeClipboard = {
+    bound: false,
+    duration: 2000,
+
+    paths: {
+        copy: 'M5.75 1a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-3a.75.75 0 00-.75-.75h-4.5zm.75 3V2.5h3V4h-3zm-2.874-.467a.75.75 0 00-.752-1.298A1.75 1.75 0 002 3.75v9.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 13.25v-9.5a1.75 1.75 0 00-.874-1.515.75.75 0 10-.752 1.298.25.25 0 01.126.217v9.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-9.5a.25.25 0 01.126-.217z',
+        check: 'M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z',
+        cross: 'M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z'
+    },
+
+    load: function () {
+        var pres = document.querySelectorAll('.yue pre');
+        for (var i = 0; i < pres.length; i++) {
+            if (!pres[i].querySelector('.clipboard')) {
+                pres[i].insertBefore(this.createButton(), pres[i].firstChild);
+            }
+        }
+
+        this.bind();
+    },
+
+    createButton: function () {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'clipboard';
+        btn.setAttribute('aria-label', '复制代码');
+
+        btn.appendChild(this.createIcon('copy'));
+        btn.appendChild(this.createIcon('check'));
+        btn.appendChild(this.createIcon('cross'));
+
+        var tip = document.createElement('span');
+        tip.className = 'clipboard-tip';
+        tip.setAttribute('aria-hidden', 'true');
+        btn.appendChild(tip);
+
+        return btn;
+    },
+
+    createIcon: function (name) {
+        var NS = 'http://www.w3.org/2000/svg';
+        var svg = document.createElementNS(NS, 'svg');
+        var path = document.createElementNS(NS, 'path');
+
+        svg.setAttribute('class', 'clipboard-icon clipboard-icon-' + name);
+        svg.setAttribute('viewBox', '0 0 16 16');
+        svg.setAttribute('width', '16');
+        svg.setAttribute('height', '16');
+        svg.setAttribute('fill', 'currentColor');
+        svg.setAttribute('aria-hidden', 'true');
+        svg.setAttribute('focusable', 'false');
+
+        path.setAttribute('fill-rule', 'evenodd');
+        path.setAttribute('d', this.paths[name]);
+
+        svg.appendChild(path);
+        return svg;
+    },
+
+    bind: function () {
+        if (this.bound) {
+            return;
+        }
+        this.bound = true;
+
+        // 全局委托，只绑一次；按钮随页面替换增删都不用重新绑定
+        document.addEventListener('click', function (e) {
+            var btn = e.target && e.target.closest ? e.target.closest('.clipboard') : null;
+            if (!btn || !document.body.contains(btn)) {
+                return;
+            }
+
+            var pre = btn.closest('pre');
+            if (!pre) {
+                return;
+            }
+
+            e.preventDefault();
+
+            VOID_CodeClipboard.copy(VOID_CodeClipboard.textOf(pre), function (ok) {
+                VOID_CodeClipboard.feedback(btn, ok);
+            });
+        });
+    },
+
+    textOf: function (pre) {
+        var code = pre.querySelector('code');
+        var text = code && code.textContent ? code.textContent : pre.textContent;
+
+        // 去掉末尾空行，避免粘贴后多一行
+        return (text || '').replace(/\s+$/, '');
+    },
+
+    copy: function (text, callback) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(
+                function () { callback(true); },
+                function () { callback(VOID_CodeClipboard.legacyCopy(text)); }
+            );
+            return;
+        }
+
+        callback(this.legacyCopy(text));
+    },
+
+    legacyCopy: function (text) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+
+        var ok = false;
+        try {
+            ok = document.execCommand('copy');
+        } catch (e) {
+            ok = false;
+        }
+
+        document.body.removeChild(ta);
+        return ok;
+    },
+
+    feedback: function (btn, ok) {
+        var tip = btn.querySelector('.clipboard-tip');
+        if (tip) {
+            tip.textContent = ok ? '复制成功' : '复制失败';
+        }
+
+        btn.classList.remove('is-copied', 'is-failed');
+        btn.classList.add('is-done', ok ? 'is-copied' : 'is-failed');
+
+        clearTimeout(btn.clipboardTimer);
+        btn.clipboardTimer = setTimeout(function () {
+            btn.classList.remove('is-done', 'is-copied', 'is-failed');
+            if (tip) {
+                tip.textContent = '';
+            }
+        }, this.duration);
     }
 };
 

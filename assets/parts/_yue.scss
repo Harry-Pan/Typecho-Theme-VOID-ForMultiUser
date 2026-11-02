@@ -323,6 +323,136 @@
 
 @import "./prism";
 
+/*
+ * 代码块复制按钮（由 VOID_CodeClipboard 注入到 .yue pre 内）
+ * 默认隐藏，悬停代码块时浮现；触屏设备常驻半透明。
+ * 复制成功：图标换成绿色对钩，左侧浮现「复制成功」，2 秒后复原。
+ */
+.yue pre .clipboard {
+    // 图标尺寸：mac 标题栏 32px 高，18px 图标在栏内上下居中仍有余量
+    --clipboard-size: 18px;
+
+    position: absolute;
+    top: 3px;
+    right: 10px;
+    z-index: 100;
+    display: block;
+    width: var(--clipboard-size);
+    height: var(--clipboard-size);
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    color: var(--clipboard-color, #22252b);
+    font-family: inherit;
+    font-size: 0;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: opacity 0.2s, color 0.2s;
+
+    // macOS 标题栏 32px 高，按钮在栏内上下居中
+    .macStyleCodeBlock & {
+        top: calc((32px - var(--clipboard-size)) * 0.5);
+    }
+
+    // 三个图标叠在同一格里，用 opacity 交叉淡入淡出：
+    // 这样「换成对钩」和「恢复成复制图标」走的是同一段过渡，不会闪断
+    .clipboard-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.2s;
+        user-select: none;
+    }
+
+    .clipboard-icon-copy {
+        opacity: 1;
+    }
+
+    &.is-done {
+        opacity: 1;
+    }
+
+    &.is-copied {
+        color: var(--clipboard-color-ok, #2ea043);
+
+        .clipboard-icon-copy { opacity: 0; }
+        .clipboard-icon-check { opacity: 1; }
+    }
+
+    &.is-failed {
+        color: var(--clipboard-color-err, #d1242f);
+
+        .clipboard-icon-copy { opacity: 0; }
+        .clipboard-icon-cross { opacity: 1; }
+    }
+
+    &:focus-visible {
+        outline: 1px dashed currentColor;
+        outline-offset: 2px;
+    }
+}
+
+.yue pre:hover .clipboard {
+    opacity: 0.6;
+}
+
+.yue pre .clipboard:hover,
+.yue pre .clipboard:focus-visible {
+    opacity: 1;
+}
+
+.yue pre .clipboard.is-done {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .yue pre .clipboard {
+        opacity: 0.8;
+    }
+}
+
+body.theme-dark .yue pre .clipboard {
+    --clipboard-color: #fff;
+    --clipboard-color-ok: #3fb950;
+    --clipboard-color-err: #f85149;
+    --clipboard-tip-color: #fff;
+}
+
+// 复制结果提示，出现在按钮左侧，与图标垂直居中对齐
+// 字体与 html 上的主题字体一致（$void-font-default），不是代码块的等宽字体
+.yue pre .clipboard-tip {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-right: 6px;
+    padding: 0;
+    font-family: $void-font-default;
+    font-size: 13px;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: right;
+    color: var(--clipboard-tip-color, #22252b);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(4px, -50%);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.yue pre .clipboard.is-done .clipboard-tip {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
 .yue pre tt {
     border: none;
     background: none;
